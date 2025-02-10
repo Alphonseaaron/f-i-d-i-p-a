@@ -1,17 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs, doc, updateDoc, query, where, deleteDoc } from 'firebase/firestore';
-import { auth, db } from '../../lib/firebase';
+import { collection, getDocs, doc, updateDoc, query, where, deleteDoc, setDoc } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { auth, db, storage } from '../../lib/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 interface ContentItem {
   id: string;
   title?: string;
   content?: string;
   author?: string;
+  authorPhoto?: string;
+  authorBio?: string;
   status?: 'pending' | 'approved' | 'rejected';
   type: 'blog' | 'project' | 'program';
   description?: string;
   imageUrl?: string;
+}
+
+interface SiteConfig {
+  name: string;
+  logo: string;
+  favicon: string;
 }
 
 export default function AdminPanel() {
@@ -19,8 +30,14 @@ export default function AdminPanel() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'blog' | 'projects' | 'programs'>('blog');
+  const [activeTab, setActiveTab] = useState<'blog' | 'projects' | 'programs' | 'site'>('blog');
   const [content, setContent] = useState<ContentItem[]>([]);
+  const [siteConfig, setSiteConfig] = useState<SiteConfig>({
+    name: 'FIDIPA',
+    logo: '',
+    favicon: ''
+  });
+  const [editingConfig, setEditingConfig] = useState(false);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -43,9 +60,17 @@ export default function AdminPanel() {
 
   const fetchContent = async () => {
     try {
+      if (activeTab === 'site') {
+        const docSnap = await getDocs(collection(db, 'site_config'));
+        if (!docSnap.empty) {
+          setSiteConfig(docSnap.docs[0].data() as SiteConfig);
+        }
+        return;
+      }
+
       let q;
       if (activeTab === 'blog') {
-        q = query(collection(db, 'blog_posts'), where('status', '==', 'pending'));
+        q = query(collection(db, 'blog_posts'));
       } else {
         q = query(collection(db, activeTab));
       }
@@ -85,6 +110,38 @@ export default function AdminPanel() {
     } catch (error) {
       console.error('Error updating content:', error);
       alert('Failed to update content');
+    }
+  };
+
+  const handleFileUpload = async (file: File, path: string) => {
+    const storageRef = ref(storage, path);
+    const snapshot = await uploadBytes(storageRef, file);
+    return getDownloadURL(snapshot.ref);
+  };
+
+  const handleSiteConfigUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const configRef = doc(db, 'site_config', 'main');
+      await setDoc(configRef, siteConfig);
+      setEditingConfig(false);
+      alert('Site configuration updated successfully!');
+    } catch (error) {
+      console.error('Error updating site config:', error);
+      alert('Failed to update site configuration');
+    }
+  };
+
+  const handleConfigFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'logo' | 'favicon') => {
+    const file = e.target.files?.[0];
+    if (file) {
+      try {
+        const url = await handleFileUpload(file, `site/${type}/${file.name}`);
+        setSiteConfig(prev => ({ ...prev, [type]: url }));
+      } catch (error) {
+        console.error(`Error uploading ${type}:`, error);
+        alert(`Failed to upload ${type}`);
+      }
     }
   };
 
@@ -144,7 +201,7 @@ export default function AdminPanel() {
         <div className="mb-8">
           <div className="border-b border-gray-600">
             <nav className="-mb-px flex space-x-8">
-              {['blog', 'projects', 'programs'].map((tab) => (
+              {['blog', 'projects', 'programs', 'site'].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab as any)}
@@ -161,65 +218,152 @@ export default function AdminPanel() {
           </div>
         </div>
 
-        <div className="space-y-6">
-          {content.map((item) => (
-            <div key={item.id} className="bg-dark-lighter p-6 rounded-lg">
-              <div className="flex justify-between items-start mb-4">
+        {activeTab === 'site' ? (
+          <div className="bg-dark-lighter p-6 rounded-lg">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold">Site Configuration</h2>
+              <button
+                onClick={() => setEditingConfig(!editingConfig)}
+                className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded"
+              >
+                {editingConfig ? 'Cancel' : 'Edit'}
+              </button>
+            </div>
+
+            {editingConfig ? (
+              <form onSubmit={handleSiteConfigUpdate} className="space-y-6">
                 <div>
-                  <h3 className="text-xl font-semibold">{item.title}</h3>
-                  {item.author && <p className="text-gray-400">By {item.author}</p>}
+                  <label className="block text-sm font-medium mb-2">Site Name</label>
+                  <input
+                    type="text"
+                    value={siteConfig.name}
+                    onChange={(e) => setSiteConfig(prev => ({ ...prev, name: e.target.value }))}
+                    className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
+                  />
                 </div>
-                <div className="flex space-x-4">
-                  {item.type === 'blog' && (
-                    <>
-                      <button
-                        onClick={() => handleAction(item, 'approve')}
-                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
-                      >
-                        Approve
-                      </button>
-                      <button
-                        onClick={() => handleAction(item, 'reject')}
-                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
-                      >
-                        Reject
-                      </button>
-                    </>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">Logo</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleConfigFileChange(e, 'logo')}
+                    className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
+                  />
+                  {siteConfig.logo && (
+                    <img src={siteConfig.logo} alt="Logo" className="mt-2 h-12" />
                   )}
-                  {(item.type === 'project' || item.type === 'program') && (
-                    <button
-                      onClick={() => handleAction(item, 'delete')}
-                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
-                    >
-                      Delete
-                    </button>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">Favicon</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleConfigFileChange(e, 'favicon')}
+                    className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
+                  />
+                  {siteConfig.favicon && (
+                    <img src={siteConfig.favicon} alt="Favicon" className="mt-2 h-8" />
+                  )}
+                </div>
+
+                <button
+                  type="submit"
+                  className="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded"
+                >
+                  Save Changes
+                </button>
+              </form>
+            ) : (
+              <div className="space-y-4">
+                <p><strong>Site Name:</strong> {siteConfig.name}</p>
+                <div>
+                  <strong>Logo:</strong>
+                  {siteConfig.logo && (
+                    <img src={siteConfig.logo} alt="Logo" className="mt-2 h-12" />
+                  )}
+                </div>
+                <div>
+                  <strong>Favicon:</strong>
+                  {siteConfig.favicon && (
+                    <img src={siteConfig.favicon} alt="Favicon" className="mt-2 h-8" />
                   )}
                 </div>
               </div>
-              
-              {item.imageUrl && (
-                <div className="mb-4 h-48 overflow-hidden rounded">
-                  <img 
-                    src={item.imageUrl} 
-                    alt={item.title}
-                    className="w-full h-full object-cover"
-                  />
+            )}
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {content.map((item) => (
+              <div key={item.id} className="bg-dark-lighter p-6 rounded-lg">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="text-xl font-semibold">{item.title}</h3>
+                    {item.author && (
+                      <div className="flex items-center mt-2">
+                        {item.authorPhoto && (
+                          <img
+                            src={item.authorPhoto}
+                            alt={item.author}
+                            className="w-10 h-10 rounded-full mr-3"
+                          />
+                        )}
+                        <div>
+                          <p className="text-gray-400">By {item.author}</p>
+                          {item.authorBio && (
+                            <p className="text-sm text-gray-500">{item.authorBio}</p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex space-x-4">
+                    <button
+                      onClick={() => handleAction(item, 'approve')}
+                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+                    >
+                      Approve
+                    </button>
+                    <button
+                      onClick={() => handleAction(item, 'reject')}
+                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+                    >
+                      Reject
+                    </button>
+                    <button
+                      onClick={() => handleAction(item, 'delete')}
+                      className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
-              )}
-              
-              <div 
-                className="prose prose-invert max-w-none"
-                dangerouslySetInnerHTML={{ __html: item.content || item.description || '' }}
-              />
-            </div>
-          ))}
+                
+                {item.imageUrl && (
+                  <div className="mb-4 h-48 overflow-hidden rounded">
+                    <img 
+                      src={item.imageUrl} 
+                      alt={item.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                
+                <div 
+                  className="prose prose-invert max-w-none"
+                  dangerouslySetInnerHTML={{ __html: item.content || item.description || '' }}
+                />
+              </div>
+            ))}
 
-          {content.length === 0 && (
-            <div className="text-center text-gray-400">
-              No {activeTab} to review
-            </div>
-          )}
-        </div>
+            {content.length === 0 && (
+              <div className="text-center text-gray-400">
+                No {activeTab} to review
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

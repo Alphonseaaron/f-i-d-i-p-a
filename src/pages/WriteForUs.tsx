@@ -13,13 +13,15 @@ const schema = z.object({
   fullName: z.string().min(2, 'Full name is required'),
   email: z.string().email('Invalid email address'),
   title: z.string().min(5, 'Title must be at least 5 characters'),
+  bio: z.string().min(10, 'Bio must be at least 10 characters'),
 });
 
 type FormData = z.infer<typeof schema>;
 
 export default function WriteForUs() {
   const [content, setContent] = useState('');
-  const [image, setImage] = useState<File | null>(null);
+  const [coverImage, setCoverImage] = useState<File | null>(null);
+  const [authorPhoto, setAuthorPhoto] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
@@ -27,34 +29,54 @@ export default function WriteForUs() {
     resolver: zodResolver(schema)
   });
 
+  const handleFileUpload = async (file: File, path: string) => {
+    const storageRef = ref(storage, path);
+    const snapshot = await uploadBytes(storageRef, file);
+    return getDownloadURL(snapshot.ref);
+  };
+
   const onSubmit = async (data: FormData) => {
     if (!content) {
       alert('Please add some content to your article');
       return;
     }
 
+    if (!coverImage) {
+      alert('Please add a cover image for your article');
+      return;
+    }
+
+    if (!authorPhoto) {
+      alert('Please add your photo');
+      return;
+    }
+
     setSubmitting(true);
     try {
-      let imageUrl = '';
+      const coverImageUrl = await handleFileUpload(
+        coverImage,
+        `blog-images/${Date.now()}-${coverImage.name}`
+      );
       
-      if (image) {
-        const storageRef = ref(storage, `blog-images/${Date.now()}-${image.name}`);
-        const snapshot = await uploadBytes(storageRef, image);
-        imageUrl = await getDownloadURL(snapshot.ref);
-      }
+      const authorPhotoUrl = await handleFileUpload(
+        authorPhoto,
+        `author-photos/${Date.now()}-${authorPhoto.name}`
+      );
 
       await addDoc(collection(db, 'blog_posts'), {
         ...data,
         content,
-        imageUrl,
-        status: 'draft',
+        imageUrl: coverImageUrl,
+        authorPhoto: authorPhotoUrl,
+        status: 'pending',
         createdAt: new Date(),
       });
 
       setSubmitSuccess(true);
       reset();
       setContent('');
-      setImage(null);
+      setCoverImage(null);
+      setAuthorPhoto(null);
     } catch (error) {
       console.error('Error submitting article:', error);
       alert('Failed to submit article. Please try again.');
@@ -101,27 +123,29 @@ export default function WriteForUs() {
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-6"
         >
-          <div>
-            <label className="block text-sm font-medium mb-2">Full Name</label>
-            <input
-              {...register('fullName')}
-              className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
-            />
-            {errors.fullName && (
-              <p className="mt-1 text-red-500 text-sm">{errors.fullName.message}</p>
-            )}
-          </div>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium mb-2">Full Name</label>
+              <input
+                {...register('fullName')}
+                className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
+              />
+              {errors.fullName && (
+                <p className="mt-1 text-red-500 text-sm">{errors.fullName.message}</p>
+              )}
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-2">Email</label>
-            <input
-              {...register('email')}
-              type="email"
-              className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
-            />
-            {errors.email && (
-              <p className="mt-1 text-red-500 text-sm">{errors.email.message}</p>
-            )}
+            <div>
+              <label className="block text-sm font-medium mb-2">Email</label>
+              <input
+                {...register('email')}
+                type="email"
+                className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
+              />
+              {errors.email && (
+                <p className="mt-1 text-red-500 text-sm">{errors.email.message}</p>
+              )}
+            </div>
           </div>
 
           <div>
@@ -136,6 +160,44 @@ export default function WriteForUs() {
           </div>
 
           <div>
+            <label className="block text-sm font-medium mb-2">Your Bio</label>
+            <textarea
+              {...register('bio')}
+              rows={3}
+              className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
+            />
+            {errors.bio && (
+              <p className="mt-1 text-red-500 text-sm">{errors.bio.message}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Your Photo</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setAuthorPhoto(e.target.files?.[0] || null)}
+              className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
+            />
+            <p className="mt-1 text-sm text-gray-400">
+              This photo will appear alongside your articles
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Cover Image</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setCoverImage(e.target.files?.[0] || null)}
+              className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
+            />
+            <p className="mt-1 text-sm text-gray-400">
+              This image will be displayed as the article's cover image
+            </p>
+          </div>
+
+          <div>
             <label className="block text-sm font-medium mb-2">Content</label>
             <div className="bg-dark border border-gray-600 rounded">
               <ReactQuill
@@ -145,16 +207,6 @@ export default function WriteForUs() {
                 className="text-white"
               />
             </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-2">Featured Image</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setImage(e.target.files?.[0] || null)}
-              className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
-            />
           </div>
 
           <button

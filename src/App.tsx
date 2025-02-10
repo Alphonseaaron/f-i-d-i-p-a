@@ -1,25 +1,26 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import Home from './sections/Home';
-import About from './sections/About';
-import Programs from './sections/Programs';
-import Projects from './sections/Projects';
-import Blog from './sections/Blog';
-import Contact from './sections/Contact';
+import HomePage from './pages/Home';
+import BlogPage from './pages/Blog';
+import ProjectsPage from './pages/Projects';
+import WriteForUsPage from './pages/WriteForUs';
+import AdminPanel from './pages/admin/AdminPanel';
 
 function App() {
   return (
-    <div className="min-h-screen bg-dark text-white">
-      <Navbar />
-      <main>
-        <Home />
-        <About />
-        <Programs />
-        <Projects />
-        <Blog />
-        <Contact />
-      </main>
-    </div>
+    <Router>
+      <div className="min-h-screen bg-dark text-white">
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/projects" element={<ProjectsPage />} />
+          <Route path="/write-for-us" element={<WriteForUsPage />} />
+          <Route path="/admin" element={<AdminPanel />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 

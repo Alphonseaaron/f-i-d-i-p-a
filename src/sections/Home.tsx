@@ -1,64 +1,141 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 
-const sliderContent = [
-  "Our project objective is to increase the capacity of rural and urban affected areas.",
-  "We implement grassroots programs and provide consultancy services.",
-  "We believe in promoting peace and gender equality."
+const slides = [
+  {
+    text: "Friendly Integrated Development Initiative in Poverty Alleviation",
+    subtext: "Empowering communities through sustainable development",
+    image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=1600"
+  },
+  {
+    text: "Our project objective is to increase the capacity of rural and urban affected areas.",
+    subtext: "Building stronger, more resilient communities",
+    image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=1600"
+  },
+  {
+    text: "We implement grassroots programs and provide consultancy services.",
+    subtext: "Creating lasting positive change",
+    image: "https://images.unsplash.com/photo-1509099836639-18ba1795216d?auto=format&fit=crop&q=80&w=1600"
+  },
+  {
+    text: "We believe in promoting peace and gender equality.",
+    subtext: "Working towards a more equitable future",
+    image: "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=1600"
+  }
 ];
 
 export default function Home() {
-  return (
-    <section id="home" className="min-h-screen flex items-center justify-center relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-dark to-dark-lighter" />
-      <div className="relative max-w-7xl mx-auto px-4 text-center">
-        <motion.h1
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="text-4xl md:text-6xl font-bold mb-6"
-        >
-          Welcome to FIDIPA
-        </motion.h1>
-        <motion.p
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-8"
-        >
-          Friendly Integrated Development Initiative in Poverty Alleviation
-        </motion.p>
-        
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="space-y-4"
-        >
-          {sliderContent.map((text, index) => (
-            <p key={index} className="text-lg text-gray-300">{text}</p>
-          ))}
-        </motion.div>
+  const [currentSlide, setCurrentSlide] = useState(0);
 
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <section id="home" className="min-h-screen relative overflow-hidden">
+      {slides.map((slide, index) => (
         <motion.div
+          key={index}
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 1 }}
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+          animate={{ opacity: currentSlide === index ? 1 : 0 }}
+          transition={{ duration: 1 }}
+          className="absolute inset-0"
+          style={{
+            zIndex: currentSlide === index ? 1 : 0,
+          }}
         >
-          <ChevronDown 
-            size={32} 
-            className="text-primary animate-bounce" 
-            onClick={() => {
-              const aboutSection = document.getElementById('about');
-              if (aboutSection) {
-                aboutSection.scrollIntoView({ behavior: 'smooth' });
-              }
+          <motion.div
+            initial={{ scale: 1.1 }}
+            animate={{ scale: currentSlide === index ? 1 : 1.1 }}
+            transition={{ duration: 5 }}
+            className="absolute inset-0 bg-cover bg-center"
+            style={{
+              backgroundImage: `url(${slide.image})`,
             }}
-          />
+          >
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 to-black/40" />
+          </motion.div>
         </motion.div>
+      ))}
+
+      <div className="relative z-10 flex items-center justify-center min-h-screen">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          {slides.map((slide, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ 
+                opacity: currentSlide === index ? 1 : 0,
+                y: currentSlide === index ? 0 : 20 
+              }}
+              transition={{ duration: 0.8 }}
+              className="absolute inset-x-0"
+              style={{
+                display: currentSlide === index ? 'block' : 'none',
+              }}
+            >
+              <motion.h1 
+                className="text-3xl md:text-5xl font-bold mb-4 text-white"
+                initial={{ y: 20 }}
+                animate={{ y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                {slide.text}
+              </motion.h1>
+              <motion.p
+                className="text-lg md:text-xl text-gray-300"
+                initial={{ y: 20 }}
+                animate={{ y: 0 }}
+                transition={{ delay: 0.4 }}
+              >
+                {slide.subtext}
+              </motion.p>
+            </motion.div>
+          ))}
+
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="flex justify-center mt-12 space-x-2"
+          >
+            {slides.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentSlide(index)}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  currentSlide === index 
+                    ? 'bg-primary w-8' 
+                    : 'bg-white/50 hover:bg-white/80'
+                }`}
+              />
+            ))}
+          </motion.div>
+        </div>
       </div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1, duration: 1 }}
+        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10"
+      >
+        <ChevronDown 
+          size={32} 
+          className="text-primary animate-bounce cursor-pointer" 
+          onClick={() => {
+            const aboutSection = document.getElementById('about');
+            if (aboutSection) {
+              aboutSection.scrollIntoView({ behavior: 'smooth' });
+            }
+          }}
+        />
+      </motion.div>
     </section>
   );
 }
