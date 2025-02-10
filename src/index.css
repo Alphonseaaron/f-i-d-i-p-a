@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.ql-editor {
+  min-height: 200px;
+  color: white;
+}
+
+.ql-toolbar {
+  border-bottom: 1px solid #4a4a4a !important;
+  background: #2d2d2d;
+}
+
+.ql-toolbar button {
+  color: white !important;
+}
+
+.ql-toolbar button:hover {
+  color: #10b981 !important;
+}
+
+.ql-formats {
+  border-right: 1px solid #4a4a4a;
+  padding-right: 8px;
+  margin-right: 8px;
+}
+
+.prose {
+  color: #d1d5db;
+}
+
+.prose h1, .prose h2, .prose h3, .prose h4 {
+  color: white;
+}
+
+.prose a {
+  color: #10b981;
+}
+
+.prose strong {
+  color: white;
+}
