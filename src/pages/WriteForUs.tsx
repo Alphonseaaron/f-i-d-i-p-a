@@ -8,6 +8,7 @@ import 'react-quill/dist/quill.snow.css';
 import { collection, addDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../lib/firebase';
+import BackButton from '../components/BackButton';
 
 const schema = z.object({
   fullName: z.string().min(2, 'Full name is required'),
@@ -107,6 +108,7 @@ export default function WriteForUs() {
 
   return (
     <div className="pt-24 pb-16 min-h-screen bg-dark">
+      <BackButton />
       <div className="max-w-3xl mx-auto px-4">
         <motion.h1 
           initial={{ opacity: 0, y: 20 }}

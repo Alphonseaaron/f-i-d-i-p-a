@@ -13,6 +13,7 @@ export default function BlogPost() {
 
     Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`,
     author: "Sarah Johnson",
+    authorPhoto: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150",
     date: "2024-02-15",
     imageUrl: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=1600"
   };
@@ -37,10 +38,20 @@ export default function BlogPost() {
           <div className="space-y-4">
             <h1 className="text-4xl font-bold">{post.title}</h1>
             
-            <div className="flex items-center text-gray-400 space-x-4">
-              <span>By {post.author}</span>
-              <span>•</span>
-              <span>{new Date(post.date).toLocaleDateString()}</span>
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center">
+                <img
+                  src={post.authorPhoto}
+                  alt={post.author}
+                  className="w-12 h-12 rounded-full mr-3 object-cover"
+                />
+                <div>
+                  <p className="font-medium">{post.author}</p>
+                  <p className="text-sm text-gray-400">
+                    {new Date(post.date).toLocaleDateString()}
+                  </p>
+                </div>
+              </div>
             </div>
 
             <div className="prose prose-invert max-w-none">

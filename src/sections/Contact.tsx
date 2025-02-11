@@ -77,7 +77,7 @@ export default function Contact() {
           viewport={{ once: true }}
           className="mt-12 text-center"
         >
-          <Link
+          <Link 
             to="/write-for-us"
             className="inline-flex items-center space-x-2 bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg transition-colors"
           >
