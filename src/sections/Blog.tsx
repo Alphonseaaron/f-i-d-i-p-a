@@ -28,8 +28,11 @@ const blogPosts = [
 
 export default function BlogSection() {
   return (
-    <section id="blog" className="py-20 bg-dark">
-      <div className="max-w-7xl mx-auto px-4">
+    <section id="blog" className="py-20 bg-dark relative">
+      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&q=80&w=1600')] bg-fixed bg-cover bg-center opacity-40" />
+      <div className="absolute inset-0 bg-dark/60" />
+      
+      <div className="max-w-7xl mx-auto px-4 relative z-10">
         <div className="flex justify-between items-center mb-12">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -58,7 +61,7 @@ export default function BlogSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="group bg-dark-lighter rounded-lg overflow-hidden transform transition-transform hover:-translate-y-1"
+              className="group bg-dark-lighter/80 backdrop-blur-sm rounded-lg overflow-hidden transform transition-transform hover:-translate-y-1"
             >
               <div className="h-48 overflow-hidden">
                 <img 

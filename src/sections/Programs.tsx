@@ -22,8 +22,11 @@ const programs = [
 
 export default function Programs() {
   return (
-    <section id="programs" className="py-20 bg-dark">
-      <div className="max-w-7xl mx-auto px-4">
+    <section id="programs" className="py-20 bg-dark relative">
+      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1542810634-71277d95dcbb?auto=format&fit=crop&q=80&w=1600')] bg-fixed bg-cover bg-center opacity-40" />
+      <div className="absolute inset-0 bg-dark/60" />
+      
+      <div className="max-w-7xl mx-auto px-4 relative z-10">
         <div className="flex justify-between items-center mb-12">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -52,7 +55,7 @@ export default function Programs() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="group bg-dark-lighter rounded-lg overflow-hidden transform transition-transform hover:-translate-y-1"
+              className="group bg-dark-lighter/80 backdrop-blur-sm rounded-lg overflow-hidden transform transition-transform hover:-translate-y-1"
             >
               <div className="h-48 overflow-hidden">
                 <img 
@@ -62,7 +65,7 @@ export default function Programs() {
                 />
               </div>
               <div className="p-6">
-                <h3 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors">{program.title}</h3>
+                <h3 className="text-xl font-semibold mb-3">{program.title}</h3>
                 <p className="text-gray-300 mb-4">{program.description}</p>
                 <Link 
                   to={`/programs/${program.title.toLowerCase().replace(/\s+/g, '-')}`}
