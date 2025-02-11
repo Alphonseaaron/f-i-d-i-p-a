@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import type { BlogPost } from '../types';
+import BackButton from '../components/BackButton';
 
 export default function Blog() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -41,6 +42,7 @@ export default function Blog() {
 
   return (
     <div className="pt-24 pb-16 min-h-screen bg-dark">
+      <BackButton />
       <div className="max-w-7xl mx-auto px-4">
         <motion.h1 
           initial={{ opacity: 0, y: 20 }}

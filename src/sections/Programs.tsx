@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const programs = [
   {
@@ -16,11 +17,6 @@ const programs = [
     title: "AIDS Orphans & Vulnerable Children",
     description: "Supporting and empowering AIDS orphans and vulnerable children through education and healthcare initiatives.",
     image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=1600"
-  },
-  {
-    title: "Capacity Building",
-    description: "Developing skills and knowledge within communities to create sustainable, long-term solutions to poverty.",
-    image: "https://images.unsplash.com/photo-1531545514256-b1400bc00f31?auto=format&fit=crop&q=80&w=1600"
   }
 ];
 
@@ -28,16 +24,27 @@ export default function Programs() {
   return (
     <section id="programs" className="py-20 bg-dark">
       <div className="max-w-7xl mx-auto px-4">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-3xl font-bold mb-12 text-center"
-        >
-          Our Programs
-        </motion.h2>
+        <div className="flex justify-between items-center mb-12">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-3xl font-bold"
+          >
+            Our Programs
+          </motion.h2>
+          <Link 
+            to="/programs"
+            className="text-primary hover:text-primary/80 transition-colors flex items-center"
+          >
+            View All Programs
+            <svg className="w-4 h-4 ml-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </Link>
+        </div>
         
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-3 gap-8">
           {programs.map((program, index) => (
             <motion.div
               key={program.title}
@@ -45,18 +52,27 @@ export default function Programs() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="bg-dark-lighter rounded-lg overflow-hidden"
+              className="group bg-dark-lighter rounded-lg overflow-hidden transform transition-transform hover:-translate-y-1"
             >
               <div className="h-48 overflow-hidden">
                 <img 
                   src={program.image} 
                   alt={program.title}
-                  className="w-full h-full object-cover transition-transform hover:scale-105"
+                  className="w-full h-full object-cover transition-transform group-hover:scale-110"
                 />
               </div>
               <div className="p-6">
-                <h3 className="text-xl font-semibold mb-3">{program.title}</h3>
-                <p className="text-gray-300">{program.description}</p>
+                <h3 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors">{program.title}</h3>
+                <p className="text-gray-300 mb-4">{program.description}</p>
+                <Link 
+                  to={`/programs/${program.title.toLowerCase().replace(/\s+/g, '-')}`}
+                  className="text-primary hover:text-primary/80 transition-colors flex items-center"
+                >
+                  Learn More 
+                  <svg className="w-4 h-4 ml-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </Link>
               </div>
             </motion.div>
           ))}

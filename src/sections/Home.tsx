@@ -38,71 +38,74 @@ export default function Home() {
 
   return (
     <section id="home" className="min-h-screen relative overflow-hidden">
-      {slides.map((slide, index) => (
-        <motion.div
-          key={index}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: currentSlide === index ? 1 : 0 }}
-          transition={{ duration: 1 }}
-          className="absolute inset-0"
-          style={{
-            zIndex: currentSlide === index ? 1 : 0,
-          }}
-        >
+      {/* Hero Section */}
+      <div className="relative h-screen">
+        {slides.map((slide, index) => (
           <motion.div
-            initial={{ scale: 1.1 }}
-            animate={{ scale: currentSlide === index ? 1 : 1.1 }}
-            transition={{ duration: 5 }}
-            className="absolute inset-0 bg-cover bg-center"
+            key={index}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: currentSlide === index ? 1 : 0 }}
+            transition={{ duration: 1 }}
+            className="absolute inset-0"
             style={{
-              backgroundImage: `url(${slide.image})`,
+              zIndex: currentSlide === index ? 1 : 0,
             }}
           >
-            <div className="absolute inset-0 bg-gradient-to-b from-black/70 to-black/40" />
-          </motion.div>
-        </motion.div>
-      ))}
-
-      <div className="relative z-10 flex items-center justify-center min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          {slides.map((slide, index) => (
             <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ 
-                opacity: currentSlide === index ? 1 : 0,
-                y: currentSlide === index ? 0 : 20 
-              }}
-              transition={{ duration: 0.8 }}
-              className="absolute inset-x-0"
+              initial={{ scale: 1.1 }}
+              animate={{ scale: currentSlide === index ? 1 : 1.1 }}
+              transition={{ duration: 5 }}
+              className="absolute inset-0 bg-cover bg-center"
               style={{
-                display: currentSlide === index ? 'block' : 'none',
+                backgroundImage: `url(${slide.image})`,
               }}
             >
-              <motion.h1 
-                className="text-3xl md:text-5xl font-bold mb-4 text-white"
-                initial={{ y: 20 }}
-                animate={{ y: 0 }}
-                transition={{ delay: 0.2 }}
-              >
-                {slide.text}
-              </motion.h1>
-              <motion.p
-                className="text-lg md:text-xl text-gray-300"
-                initial={{ y: 20 }}
-                animate={{ y: 0 }}
-                transition={{ delay: 0.4 }}
-              >
-                {slide.subtext}
-              </motion.p>
+              <div className="absolute inset-0 bg-gradient-to-b from-black/70 to-black/40" />
             </motion.div>
-          ))}
+          </motion.div>
+        ))}
+
+        <div className="relative z-10 h-full flex flex-col justify-center items-center">
+          <div className="max-w-4xl mx-auto px-4 text-center">
+            {slides.map((slide, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ 
+                  opacity: currentSlide === index ? 1 : 0,
+                  y: currentSlide === index ? 0 : 20 
+                }}
+                transition={{ duration: 0.8 }}
+                className="absolute inset-x-0"
+                style={{
+                  display: currentSlide === index ? 'block' : 'none',
+                }}
+              >
+                <motion.h1 
+                  className="text-2xl md:text-4xl lg:text-5xl font-bold mb-6 text-white leading-tight"
+                  initial={{ y: 20 }}
+                  animate={{ y: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  {slide.text}
+                </motion.h1>
+                <motion.p
+                  className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto"
+                  initial={{ y: 20 }}
+                  animate={{ y: 0 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  {slide.subtext}
+                </motion.p>
+              </motion.div>
+            ))}
+          </div>
 
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6 }}
-            className="flex justify-center mt-12 space-x-2"
+            className="absolute bottom-32 flex justify-center space-x-2"
           >
             {slides.map((_, index) => (
               <button
@@ -117,25 +120,25 @@ export default function Home() {
             ))}
           </motion.div>
         </div>
-      </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1, duration: 1 }}
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10"
-      >
-        <ChevronDown 
-          size={32} 
-          className="text-primary animate-bounce cursor-pointer" 
-          onClick={() => {
-            const aboutSection = document.getElementById('about');
-            if (aboutSection) {
-              aboutSection.scrollIntoView({ behavior: 'smooth' });
-            }
-          }}
-        />
-      </motion.div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1, duration: 1 }}
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10"
+        >
+          <ChevronDown 
+            size={32} 
+            className="text-primary animate-bounce cursor-pointer" 
+            onClick={() => {
+              const aboutSection = document.getElementById('about');
+              if (aboutSection) {
+                aboutSection.scrollIntoView({ behavior: 'smooth' });
+              }
+            }}
+          />
+        </motion.div>
+      </div>
     </section>
   );
 }
