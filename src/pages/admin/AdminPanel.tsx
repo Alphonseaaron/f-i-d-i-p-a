@@ -4,7 +4,10 @@ import { motion } from 'framer-motion';
 import { Settings, FileImage, Layout, BookOpen, Target, Users } from 'lucide-react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { supabase } from '../../lib/supabase';
+import { collection, query, orderBy, getDocs, updateDoc, doc, addDoc } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { onAuthStateChanged } from 'firebase/auth';
+import { db, storage, auth } from '../../lib/firebase';
 
 interface ContentItem {
   id: string;
@@ -56,18 +59,12 @@ export default function AdminPanel() {
   const [uploadProgress, setUploadProgress] = useState(0);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setSession(user);
       setLoading(false);
     });
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
+    return () => unsubscribe();
   }, []);
 
   useEffect(() => {
@@ -82,43 +79,30 @@ export default function AdminPanel() {
       
       switch (activeTab) {
         case 'blog':
-          const { data: posts } = await supabase
-            .from('blog_posts')
-            .select('*')
-            .order('created_at', { ascending: false });
-          data = posts;
+          const blogSnapshot = await getDocs(query(collection(db, 'blog_posts'), orderBy('created_at', 'desc')));
+          data = blogSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
           break;
 
         case 'projects':
-          const { data: projects } = await supabase
-            .from('projects')
-            .select('*')
-            .order('created_at', { ascending: false });
-          data = projects;
+          const projectsSnapshot = await getDocs(query(collection(db, 'projects'), orderBy('created_at', 'desc')));
+          data = projectsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
           break;
 
         case 'programs':
-          const { data: programs } = await supabase
-            .from('programs')
-            .select('*')
-            .order('created_at', { ascending: false });
-          data = programs;
+          const programsSnapshot = await getDocs(query(collection(db, 'programs'), orderBy('created_at', 'desc')));
+          data = programsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
           break;
 
         case 'sections':
-          const { data: sections } = await supabase
-            .from('sections')
-            .select('*')
-            .order('order', { ascending: true });
-          setSections(sections || []);
+          const sectionsSnapshot = await getDocs(query(collection(db, 'sections'), orderBy('order', 'asc')));
+          setSections(sectionsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Section[]);
           return;
 
         case 'site':
-          const { data: config } = await supabase
-            .from('site_config')
-            .select('*')
-            .single();
-          setSiteConfig(config);
+          const configSnapshot = await getDocs(collection(db, 'site_config'));
+          if (!configSnapshot.empty) {
+            setSiteConfig({ id: configSnapshot.docs[0].id, ...configSnapshot.docs[0].data() } as SiteConfig);
+          }
           return;
       }
 
@@ -133,20 +117,12 @@ export default function AdminPanel() {
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random()}.${fileExt}`;
       const filePath = `${activeTab}/${fileName}`;
+      const storageRef = ref(storage, filePath);
 
-      const { error: uploadError, data } = await supabase.storage
-        .from('media')
-        .upload(filePath, file);
+      await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
 
-      if (uploadError) {
-        throw uploadError;
-      }
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('media')
-        .getPublicUrl(filePath);
-
-      return publicUrl;
+      return url;
     } catch (error) {
       console.error('Error uploading file:', error);
       throw error;
@@ -155,15 +131,13 @@ export default function AdminPanel() {
 
   const handleUpdateContent = async (item: ContentItem) => {
     try {
-      const table = activeTab === 'blog' ? 'blog_posts' : 
-                    activeTab === 'projects' ? 'projects' : 'programs';
+      const collectionName = activeTab === 'blog' ? 'blog_posts' : 
+                            activeTab === 'projects' ? 'projects' : 'programs';
 
-      const { error } = await supabase
-        .from(table)
-        .update(item)
-        .eq('id', item.id);
-
-      if (error) throw error;
+      await updateDoc(doc(db, collectionName, item.id), {
+        ...item,
+        updated_at: new Date()
+      });
 
       fetchContent();
       setEditingItem(null);
@@ -265,7 +239,7 @@ export default function AdminPanel() {
           </div>
           <div className="absolute bottom-0 w-64 p-4 border-t border-gray-800">
             <button
-              onClick={() => supabase.auth.signOut()}
+              onClick={() => auth.signOut()}
               className="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
             >
               Logout
