@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Settings, FileImage, Layout, BookOpen, Target, Users, Plus, Trash2, Edit, Eye } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Settings, FileImage, Layout, BookOpen, Target, Users, Plus, Trash2, Edit, Eye, LogOut, Sun, Moon } from 'lucide-react';
 import { collection, query, orderBy, getDocs, updateDoc, doc, addDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { useAuth } from '../../lib/auth';
@@ -8,6 +8,7 @@ import { uploadFile, deleteFile } from '../../lib/storage';
 import ContentForm from '../../components/admin/ContentForm';
 import MediaUploader from '../../components/admin/MediaUploader';
 import Editor from '../../components/admin/Editor';
+import { useTheme } from '../../hooks/useTheme';
 
 interface ContentItem {
   id: string;
@@ -52,6 +53,7 @@ interface Section {
 
 export default function AdminPanel() {
   const { isAuthenticated, isLoading, login, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
@@ -61,14 +63,22 @@ export default function AdminPanel() {
   const [sections, setSections] = useState<Section[]>([]);
   const [editingItem, setEditingItem] = useState<ContentItem | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [isMounted, setIsMounted] = useState(true);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    setIsMounted(true);
+    return () => setIsMounted(false);
+  }, []);
+
+  useEffect(() => {
+    if (isAuthenticated && isMounted) {
       fetchContent();
     }
-  }, [isAuthenticated, activeTab]);
+  }, [isAuthenticated, activeTab, isMounted]);
 
   const fetchContent = async () => {
+    if (!isMounted) return;
+
     try {
       let collectionName = '';
       switch (activeTab) {
@@ -89,22 +99,23 @@ export default function AdminPanel() {
       if (collectionName) {
         const q = query(collection(db, collectionName), orderBy('created_at', 'desc'));
         const snapshot = await getDocs(q);
-        const items = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
+        if (isMounted) {
+          const items = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }));
 
-        if (activeTab === 'sections') {
-          setSections(items as Section[]);
-        } else {
-          setContent(items as ContentItem[]);
+          if (activeTab === 'sections') {
+            setSections(items as Section[]);
+          } else {
+            setContent(items as ContentItem[]);
+          }
         }
       }
 
-      // Fetch site config
       if (activeTab === 'site') {
         const configSnapshot = await getDocs(collection(db, 'site_config'));
-        if (!configSnapshot.empty) {
+        if (isMounted && !configSnapshot.empty) {
           setSiteConfig({ id: configSnapshot.docs[0].id, ...configSnapshot.docs[0].data() } as SiteConfig);
         }
       }
@@ -139,12 +150,13 @@ export default function AdminPanel() {
       const collectionName = `${activeTab === 'blog' ? 'blog_posts' : activeTab}`;
       await deleteDoc(doc(db, collectionName, item.id));
 
-      // Delete associated image if it exists
       if (item.image_path) {
         await deleteFile(item.image_path);
       }
 
-      fetchContent();
+      if (isMounted) {
+        fetchContent();
+      }
     } catch (error) {
       console.error('Error deleting item:', error);
       alert('Failed to delete item');
@@ -168,9 +180,11 @@ export default function AdminPanel() {
         });
       }
 
-      setIsCreating(false);
-      setEditingItem(null);
-      fetchContent();
+      if (isMounted) {
+        setIsCreating(false);
+        setEditingItem(null);
+        fetchContent();
+      }
     } catch (error) {
       console.error('Error saving content:', error);
       alert('Failed to save changes');
@@ -179,7 +193,7 @@ export default function AdminPanel() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-dark flex items-center justify-center">
+      <div className="min-h-screen bg-light dark:bg-dark flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
       </div>
     );
@@ -187,9 +201,22 @@ export default function AdminPanel() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-dark">
-        <div className="bg-dark-lighter p-8 rounded-lg w-full max-w-md">
-          <h2 className="text-2xl font-bold mb-6 text-center">Admin Access</h2>
+      <div className="min-h-screen flex items-center justify-center bg-light dark:bg-dark">
+        <div className="bg-white dark:bg-dark-lighter p-8 rounded-lg shadow-lg w-full max-w-md">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold">Admin Access</h2>
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-dark-accent transition-colors"
+              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-5 h-5 text-primary" />
+              ) : (
+                <Moon className="w-5 h-5 text-primary" />
+              )}
+            </button>
+          </div>
           {loginError && (
             <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded text-red-500 text-center">
               {loginError}
@@ -197,22 +224,22 @@ export default function AdminPanel() {
           )}
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Email</label>
+              <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Email</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
+                className="w-full p-2 rounded bg-light dark:bg-dark border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">Password</label>
+              <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Password</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
+                className="w-full p-2 rounded bg-light dark:bg-dark border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
                 required
               />
             </div>
@@ -229,16 +256,31 @@ export default function AdminPanel() {
   }
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-light dark:bg-dark text-gray-900 dark:text-white">
       <div className="flex h-screen">
-        <div className="w-64 bg-dark-lighter border-r border-gray-800">
+        <div className="w-64 bg-white dark:bg-dark-lighter border-r border-gray-200 dark:border-gray-800">
           <div className="p-4">
-            <h1 className="text-xl font-bold mb-8">Admin Panel</h1>
+            <div className="flex items-center justify-between mb-8">
+              <h1 className="text-xl font-bold">Admin Panel</h1>
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-dark-accent transition-colors"
+                aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+              >
+                {theme === 'dark' ? (
+                  <Sun className="w-5 h-5 text-primary" />
+                ) : (
+                  <Moon className="w-5 h-5 text-primary" />
+                )}
+              </button>
+            </div>
             <nav className="space-y-2">
               <button
                 onClick={() => setActiveTab('blog')}
                 className={`w-full flex items-center space-x-2 p-2 rounded ${
-                  activeTab === 'blog' ? 'bg-primary text-white' : 'text-gray-300 hover:bg-dark-accent'
+                  activeTab === 'blog' 
+                    ? 'bg-primary text-white' 
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-accent'
                 }`}
               >
                 <BookOpen size={20} />
@@ -247,7 +289,9 @@ export default function AdminPanel() {
               <button
                 onClick={() => setActiveTab('projects')}
                 className={`w-full flex items-center space-x-2 p-2 rounded ${
-                  activeTab === 'projects' ? 'bg-primary text-white' : 'text-gray-300 hover:bg-dark-accent'
+                  activeTab === 'projects'
+                    ? 'bg-primary text-white'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-accent'
                 }`}
               >
                 <Target size={20} />
@@ -256,7 +300,9 @@ export default function AdminPanel() {
               <button
                 onClick={() => setActiveTab('programs')}
                 className={`w-full flex items-center space-x-2 p-2 rounded ${
-                  activeTab === 'programs' ? 'bg-primary text-white' : 'text-gray-300 hover:bg-dark-accent'
+                  activeTab === 'programs'
+                    ? 'bg-primary text-white'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-accent'
                 }`}
               >
                 <Users size={20} />
@@ -265,7 +311,9 @@ export default function AdminPanel() {
               <button
                 onClick={() => setActiveTab('sections')}
                 className={`w-full flex items-center space-x-2 p-2 rounded ${
-                  activeTab === 'sections' ? 'bg-primary text-white' : 'text-gray-300 hover:bg-dark-accent'
+                  activeTab === 'sections'
+                    ? 'bg-primary text-white'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-accent'
                 }`}
               >
                 <Layout size={20} />
@@ -274,7 +322,9 @@ export default function AdminPanel() {
               <button
                 onClick={() => setActiveTab('media')}
                 className={`w-full flex items-center space-x-2 p-2 rounded ${
-                  activeTab === 'media' ? 'bg-primary text-white' : 'text-gray-300 hover:bg-dark-accent'
+                  activeTab === 'media'
+                    ? 'bg-primary text-white'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-accent'
                 }`}
               >
                 <FileImage size={20} />
@@ -283,7 +333,9 @@ export default function AdminPanel() {
               <button
                 onClick={() => setActiveTab('site')}
                 className={`w-full flex items-center space-x-2 p-2 rounded ${
-                  activeTab === 'site' ? 'bg-primary text-white' : 'text-gray-300 hover:bg-dark-accent'
+                  activeTab === 'site'
+                    ? 'bg-primary text-white'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-accent'
                 }`}
               >
                 <Settings size={20} />
@@ -291,12 +343,13 @@ export default function AdminPanel() {
               </button>
             </nav>
           </div>
-          <div className="absolute bottom-0 w-64 p-4 border-t border-gray-800">
+          <div className="absolute bottom-0 w-64 p-4 border-t border-gray-200 dark:border-gray-800">
             <button
               onClick={logout}
-              className="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+              className="w-full flex items-center justify-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition-colors"
             >
-              Logout
+              <LogOut size={20} />
+              <span>Logout</span>
             </button>
           </div>
         </div>
@@ -317,148 +370,179 @@ export default function AdminPanel() {
             )}
           </div>
 
-          {(isCreating || editingItem) && activeTab !== 'site' && activeTab !== 'media' ? (
-            <div className="bg-dark-lighter p-6 rounded-lg">
-              <ContentForm
-                type={activeTab === 'blog' ? 'blog' : activeTab === 'projects' ? 'project' : 'program'}
-                initialData={editingItem}
-                onSubmit={handleSubmit}
-              />
-            </div>
-          ) : (
-            <>
-              {activeTab !== 'site' && activeTab !== 'media' && (
-                <div className="grid gap-6">
-                  {content.map((item) => (
-                    <div key={item.id} className="bg-dark-lighter p-6 rounded-lg">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
-                          <p className="text-gray-400">{item.description}</p>
+          <AnimatePresence mode="wait">
+            {(isCreating || editingItem) && activeTab !== 'site' && activeTab !== 'media' ? (
+              <motion.div
+                key="form"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="bg-white dark:bg-dark-lighter p-6 rounded-lg shadow-lg"
+              >
+                <ContentForm
+                  type={activeTab === 'blog' ? 'blog' : activeTab === 'projects' ? 'project' : 'program'}
+                  initialData={editingItem}
+                  onSubmit={handleSubmit}
+                />
+              </motion.div>
+            ) : (
+              <>
+                {activeTab !== 'site' && activeTab !== 'media' && (
+                  <motion.div
+                    key="content-list"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="grid gap-6"
+                  >
+                    {content.map((item, index) => (
+                      <motion.div
+                        key={item.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        className="bg-white dark:bg-dark-lighter p-6 rounded-lg shadow-lg"
+                      >
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
+                            <p className="text-gray-600 dark:text-gray-400">{item.description}</p>
+                          </div>
+                          <div className="flex space-x-2">
+                            <button
+                              onClick={() => handleEdit(item)}
+                              className="p-2 text-gray-600 dark:text-gray-400 hover:text-primary transition-colors"
+                            >
+                              <Edit size={20} />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(item)}
+                              className="p-2 text-gray-600 dark:text-gray-400 hover:text-red-500 transition-colors"
+                            >
+                              <Trash2 size={20} />
+                            </button>
+                          </div>
                         </div>
-                        <div className="flex space-x-2">
-                          <button
-                            onClick={() => handleEdit(item)}
-                            className="p-2 text-gray-400 hover:text-primary"
-                          >
-                            <Edit size={20} />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(item)}
-                            className="p-2 text-gray-400 hover:text-red-500"
-                          >
-                            <Trash2 size={20} />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                )}
 
-              {activeTab === 'site' && siteConfig && (
-                <div className="bg-dark-lighter p-6 rounded-lg">
-                  <form className="space-y-6">
-                    <div>
-                      <label className="block text-sm font-medium mb-2">Site Name</label>
-                      <input
-                        type="text"
-                        value={siteConfig.name}
-                        onChange={(e) => setSiteConfig({ ...siteConfig, name: e.target.value })}
-                        className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
-                      />
-                    </div>
-                    
-                    <div className="grid md:grid-cols-2 gap-6">
+                {activeTab === 'site' && siteConfig && (
+                  <motion.div
+                    key="site-config"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="bg-white dark:bg-dark-lighter p-6 rounded-lg shadow-lg"
+                  >
+                    <form className="space-y-6">
                       <div>
-                        <label className="block text-sm font-medium mb-2">Meta Title</label>
+                        <label className="block text-sm font-medium mb-2">Site Name</label>
                         <input
                           type="text"
-                          value={siteConfig.meta_title || ''}
-                          onChange={(e) => setSiteConfig({ ...siteConfig, meta_title: e.target.value })}
-                          className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
+                          value={siteConfig.name}
+                          onChange={(e) => setSiteConfig({ ...siteConfig, name: e.target.value })}
+                          className="w-full p-2 rounded bg-light dark:bg-dark border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
                         />
                       </div>
                       
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-sm font-medium mb-2">Meta Title</label>
+                          <input
+                            type="text"
+                            value={siteConfig.meta_title || ''}
+                            onChange={(e) => setSiteConfig({ ...siteConfig, meta_title: e.target.value })}
+                            className="w-full p-2 rounded bg-light dark:bg-dark border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
+                          />
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium mb-2">Meta Description</label>
+                          <textarea
+                            value={siteConfig.meta_description || ''}
+                            onChange={(e) => setSiteConfig({ ...siteConfig, meta_description: e.target.value })}
+                            className="w-full p-2 rounded bg-light dark:bg-dark border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
+                            rows={2}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-sm font-medium mb-2">Logo</label>
+                          <MediaUploader
+                            onUploadComplete={(url) => setSiteConfig({ ...siteConfig, logo_url: url })}
+                            folder="site"
+                          />
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium mb-2">Favicon</label>
+                          <MediaUploader
+                            onUploadComplete={(url) => setSiteConfig({ ...siteConfig, favicon_url: url })}
+                            folder="site"
+                          />
+                        </div>
+                      </div>
+
                       <div>
-                        <label className="block text-sm font-medium mb-2">Meta Description</label>
-                        <textarea
-                          value={siteConfig.meta_description || ''}
-                          onChange={(e) => setSiteConfig({ ...siteConfig, meta_description: e.target.value })}
-                          className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
-                          rows={3}
-                        />
+                        <h3 className="text-lg font-medium mb-4">Social Links</h3>
+                        <div className="grid md:grid-cols-2 gap-4">
+                          {Object.entries(siteConfig.social_links || {}).map(([platform, url]) => (
+                            <div key={platform}>
+                              <label className="block text-sm font-medium mb-2 capitalize">{platform}</label>
+                              <input
+                                type="url"
+                                value={url || ''}
+                                onChange={(e) => setSiteConfig({
+                                  ...siteConfig,
+                                  social_links: {
+                                    ...siteConfig.social_links,
+                                    [platform]: e.target.value
+                                  }
+                                })}
+                                className="w-full p-2 rounded bg-light dark:bg-dark border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
+                              />
+                            </div>
+                          ))}
+                        </div>
                       </div>
+
+                      <button
+                        type="submit"
+                        className="w-full bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded transition-colors"
+                      >
+                        Save Changes
+                      </button>
+                    </form>
+                  </motion.div>
+                )}
+
+                {activeTab === 'media' && (
+                  <motion.div
+                    key="media-library"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="space-y-6"
+                  >
+                    <MediaUploader
+                      onUploadComplete={(url) => {
+                        console.log('Uploaded:', url);
+                      }}
+                      folder="media"
+                    />
+                    
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {/* Media items would go here */}
                     </div>
-
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-sm font-medium mb-2">Logo</label>
-                        <MediaUploader
-                          onUploadComplete={(url) => setSiteConfig({ ...siteConfig, logo_url: url })}
-                          folder="site"
-                        />
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium mb-2">Favicon</label>
-                        <MediaUploader
-                          onUploadComplete={(url) => setSiteConfig({ ...siteConfig, favicon_url: url })}
-                          folder="site"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="text-lg font-medium mb-4">Social Links</h3>
-                      <div className="grid md:grid-cols-2 gap-4">
-                        {Object.entries(siteConfig.social_links || {}).map(([platform, url]) => (
-                          <div key={platform}>
-                            <label className="block text-sm font-medium mb-2 capitalize">{platform}</label>
-                            <input
-                              type="url"
-                              value={url || ''}
-                              onChange={(e) => setSiteConfig({
-                                ...siteConfig,
-                                social_links: {
-                                  ...siteConfig.social_links,
-                                  [platform]: e.target.value
-                                }
-                              })}
-                              className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <button
-                      type="submit"
-                      className="w-full bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded transition-colors"
-                    >
-                      Save Changes
-                    </button>
-                  </form>
-                </div>
-              )}
-
-              {activeTab === 'media' && (
-                <div className="space-y-6">
-                  <MediaUploader
-                    onUploadComplete={(url) => {
-                      // Handle media upload
-                      console.log('Uploaded:', url);
-                    }}
-                    folder="media"
-                  />
-                  
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {/* Media items would go here */}
-                  </div>
-                </div>
-              )}
-            </>
-          )}
+                  </motion.div>
+                )}
+              </>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>
