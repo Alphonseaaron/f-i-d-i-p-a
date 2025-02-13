@@ -22,9 +22,9 @@ const programs = [
 
 export default function Programs() {
   return (
-    <section id="programs" className="py-20 bg-dark relative">
-      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1542810634-71277d95dcbb?auto=format&fit=crop&q=80&w=1600')] bg-fixed bg-cover bg-center opacity-40" />
-      <div className="absolute inset-0 bg-dark/60" />
+    <section id="programs" className="py-20 relative bg-light dark:bg-dark">
+      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1542810634-71277d95dcbb?auto=format&fit=crop&q=80&w=1600')] bg-fixed bg-cover bg-center opacity-10 dark:opacity-40" />
+      <div className="absolute inset-0 bg-white/90 dark:bg-dark/60" />
       
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         <div className="flex justify-between items-center mb-12">
@@ -32,7 +32,7 @@ export default function Programs() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl font-bold"
+            className="text-3xl font-bold text-gray-900 dark:text-white"
           >
             Our Programs
           </motion.h2>
@@ -53,9 +53,10 @@ export default function Programs() {
               key={program.title}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
+              whileHover={{ y: -8 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="group bg-dark-lighter/80 backdrop-blur-sm rounded-lg overflow-hidden transform transition-transform hover:-translate-y-1"
+              className="group bg-white dark:bg-dark-lighter/80 shadow-lg dark:shadow-none backdrop-blur-sm rounded-lg overflow-hidden hover:shadow-xl dark:hover:bg-dark-accent/50 transition-all duration-300"
             >
               <div className="h-48 overflow-hidden">
                 <img 
@@ -65,8 +66,8 @@ export default function Programs() {
                 />
               </div>
               <div className="p-6">
-                <h3 className="text-xl font-semibold mb-3">{program.title}</h3>
-                <p className="text-gray-300 mb-4">{program.description}</p>
+                <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">{program.title}</h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-4">{program.description}</p>
                 <Link 
                   to={`/programs/${program.title.toLowerCase().replace(/\s+/g, '-')}`}
                   className="text-primary hover:text-primary/80 transition-colors flex items-center"

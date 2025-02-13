@@ -19,13 +19,13 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="py-20 bg-dark-lighter">
+    <section id="contact" className="py-20 bg-white dark:bg-dark-lighter">
       <div className="max-w-7xl mx-auto px-4">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-3xl font-bold mb-12 text-center"
+          className="text-3xl font-bold mb-12 text-center text-gray-900 dark:text-white"
         >
           Contact Us
         </motion.h2>
@@ -36,51 +36,57 @@ export default function Contact() {
           viewport={{ once: true }}
           className="grid md:grid-cols-2 gap-8"
         >
-          <div className="bg-dark p-6 rounded-lg relative overflow-hidden group">
-            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1577563908411-5077b6dc7624?auto=format&fit=crop&q=80&w=1600')] bg-cover bg-center opacity-10 group-hover:opacity-20 transition-opacity duration-300" />
+          <motion.div
+            whileHover={{ y: -8 }}
+            className="bg-white dark:bg-dark p-6 rounded-lg shadow-lg dark:shadow-none relative overflow-hidden group hover:shadow-xl dark:hover:bg-dark-accent transition-all duration-300"
+          >
+            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1577563908411-5077b6dc7624?auto=format&fit=crop&q=80&w=1600')] bg-cover bg-center opacity-5 dark:opacity-10 group-hover:opacity-10 dark:group-hover:opacity-20 transition-opacity duration-300" />
             <div className="relative z-10">
               <MapPin className="w-8 h-8 text-primary mb-4" />
-              <h3 className="font-semibold text-lg mb-2">Address</h3>
-              <p className="text-gray-300">Kayole Spine Road Line D2-303</p>
+              <h3 className="font-semibold text-lg mb-2 text-gray-900 dark:text-white">Address</h3>
+              <p className="text-gray-600 dark:text-gray-300">Kayole Spine Road Line D2-303</p>
             </div>
-          </div>
+          </motion.div>
 
-          <button
+          <motion.button
             onClick={handlePhoneClick}
-            className="bg-dark p-6 rounded-lg text-left hover:bg-dark-lighter transition-colors relative overflow-hidden group"
+            whileHover={{ y: -8 }}
+            className="bg-white dark:bg-dark p-6 rounded-lg shadow-lg dark:shadow-none text-left hover:shadow-xl dark:hover:bg-dark-accent transition-all duration-300 relative overflow-hidden group w-full"
           >
-            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1523966211575-eb4a01e7dd51?auto=format&fit=crop&q=80&w=1600')] bg-cover bg-center opacity-10 group-hover:opacity-20 transition-opacity duration-300" />
+            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1523966211575-eb4a01e7dd51?auto=format&fit=crop&q=80&w=1600')] bg-cover bg-center opacity-5 dark:opacity-10 group-hover:opacity-10 dark:group-hover:opacity-20 transition-opacity duration-300" />
             <div className="relative z-10">
               <Phone className="w-8 h-8 text-primary mb-4" />
-              <h3 className="font-semibold text-lg mb-2">Phone</h3>
-              <p className="text-gray-300">+254 788 377 557</p>
+              <h3 className="font-semibold text-lg mb-2 text-gray-900 dark:text-white">Phone</h3>
+              <p className="text-gray-600 dark:text-gray-300">+254 788 377 557</p>
             </div>
-          </button>
+          </motion.button>
 
-          <button
+          <motion.button
             onClick={handleEmailClick}
-            className="bg-dark p-6 rounded-lg text-left hover:bg-dark-lighter transition-colors relative overflow-hidden group"
+            whileHover={{ y: -8 }}
+            className="bg-white dark:bg-dark p-6 rounded-lg shadow-lg dark:shadow-none text-left hover:shadow-xl dark:hover:bg-dark-accent transition-all duration-300 relative overflow-hidden group w-full"
           >
-            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1596526131083-e8c633c948d2?auto=format&fit=crop&q=80&w=1600')] bg-cover bg-center opacity-10 group-hover:opacity-20 transition-opacity duration-300" />
+            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1596526131083-e8c633c948d2?auto=format&fit=crop&q=80&w=1600')] bg-cover bg-center opacity-5 dark:opacity-10 group-hover:opacity-10 dark:group-hover:opacity-20 transition-opacity duration-300" />
             <div className="relative z-10">
               <Mail className="w-8 h-8 text-primary mb-4" />
-              <h3 className="font-semibold text-lg mb-2">Email</h3>
-              <p className="text-gray-300">info@fidipa.org</p>
-              <p className="text-gray-300">fidipakenya@gmail.com</p>
+              <h3 className="font-semibold text-lg mb-2 text-gray-900 dark:text-white">Email</h3>
+              <p className="text-gray-600 dark:text-gray-300">info@fidipa.org</p>
+              <p className="text-gray-600 dark:text-gray-300">fidipakenya@gmail.com</p>
             </div>
-          </button>
+          </motion.button>
 
-          <button
+          <motion.button
             onClick={handleWebsiteClick}
-            className="bg-dark p-6 rounded-lg text-left hover:bg-dark-lighter transition-colors relative overflow-hidden group"
+            whileHover={{ y: -8 }}
+            className="bg-white dark:bg-dark p-6 rounded-lg shadow-lg dark:shadow-none text-left hover:shadow-xl dark:hover:bg-dark-accent transition-all duration-300 relative overflow-hidden group w-full"
           >
-            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1487014679447-9f8336841d58?auto=format&fit=crop&q=80&w=1600')] bg-cover bg-center opacity-10 group-hover:opacity-20 transition-opacity duration-300" />
+            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1487014679447-9f8336841d58?auto=format&fit=crop&q=80&w=1600')] bg-cover bg-center opacity-5 dark:opacity-10 group-hover:opacity-10 dark:group-hover:opacity-20 transition-opacity duration-300" />
             <div className="relative z-10">
               <Globe className="w-8 h-8 text-primary mb-4" />
-              <h3 className="font-semibold text-lg mb-2">Website</h3>
-              <p className="text-gray-300">www.fidipa.org</p>
+              <h3 className="font-semibold text-lg mb-2 text-gray-900 dark:text-white">Website</h3>
+              <p className="text-gray-600 dark:text-gray-300">www.fidipa.org</p>
             </div>
-          </button>
+          </motion.button>
         </motion.div>
 
         <motion.div
@@ -91,7 +97,7 @@ export default function Contact() {
         >
           <Link 
             to="/write-for-us"
-            className="inline-flex items-center space-x-2 bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg transition-colors"
+            className="inline-flex items-center space-x-2 bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg transition-colors shadow-lg hover:shadow-xl"
           >
             <PenTool size={20} />
             <span>Write for Us</span>
