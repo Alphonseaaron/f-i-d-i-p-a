@@ -1,33 +1,38 @@
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { storage } from './firebase';
 import { nanoid } from 'nanoid';
 
 interface UploadResponse {
   url: string;
-  key: string;
+  path: string;
 }
 
-export async function uploadFile(file: File): Promise<UploadResponse> {
+export async function uploadFile(file: File, folder: string = 'uploads'): Promise<UploadResponse> {
   try {
-    // Generate a unique filename
     const fileExtension = file.name.split('.').pop();
     const uniqueFilename = `${nanoid()}.${fileExtension}`;
+    const path = `${folder}/${uniqueFilename}`;
+    const storageRef = ref(storage, path);
     
-    // Create storage reference
-    const storageRef = ref(storage, `uploads/${uniqueFilename}`);
-    
-    // Upload file
     await uploadBytes(storageRef, file);
-    
-    // Get download URL
     const url = await getDownloadURL(storageRef);
     
     return {
       url,
-      key: uniqueFilename
+      path
     };
   } catch (error) {
     console.error('Error uploading file:', error);
+    throw error;
+  }
+}
+
+export async function deleteFile(path: string): Promise<void> {
+  try {
+    const storageRef = ref(storage, path);
+    await deleteObject(storageRef);
+  } catch (error) {
+    console.error('Error deleting file:', error);
     throw error;
   }
 }

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Settings, FileImage, Layout, BookOpen, Target, Users } from 'lucide-react';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
-import { collection, query, orderBy, getDocs, updateDoc, doc, addDoc } from 'firebase/firestore';
+import { Settings, FileImage, Layout, BookOpen, Target, Users, Plus, Trash2, Edit, Eye } from 'lucide-react';
+import { collection, query, orderBy, getDocs, updateDoc, doc, addDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { useAuth } from '../../lib/auth';
-import { uploadFile } from '../../lib/storage';
+import { uploadFile, deleteFile } from '../../lib/storage';
+import ContentForm from '../../components/admin/ContentForm';
+import MediaUploader from '../../components/admin/MediaUploader';
+import Editor from '../../components/admin/Editor';
 
 interface ContentItem {
   id: string;
@@ -14,6 +15,7 @@ interface ContentItem {
   content?: string;
   description?: string;
   image_url?: string;
+  image_path?: string;
   status?: string;
   meta_title?: string;
   meta_description?: string;
@@ -21,6 +23,7 @@ interface ContentItem {
   author?: string;
   author_photo?: string;
   author_bio?: string;
+  created_at?: any;
 }
 
 interface SiteConfig {
@@ -43,6 +46,7 @@ interface Section {
   title: string;
   content: string;
   image_url?: string;
+  image_path?: string;
   order: number;
 }
 
@@ -56,6 +60,7 @@ export default function AdminPanel() {
   const [siteConfig, setSiteConfig] = useState<SiteConfig | null>(null);
   const [sections, setSections] = useState<Section[]>([]);
   const [editingItem, setEditingItem] = useState<ContentItem | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -65,38 +70,44 @@ export default function AdminPanel() {
 
   const fetchContent = async () => {
     try {
-      let data;
-      
+      let collectionName = '';
       switch (activeTab) {
         case 'blog':
-          const blogSnapshot = await getDocs(query(collection(db, 'blog_posts'), orderBy('created_at', 'desc')));
-          data = blogSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          collectionName = 'blog_posts';
           break;
-
         case 'projects':
-          const projectsSnapshot = await getDocs(query(collection(db, 'projects'), orderBy('created_at', 'desc')));
-          data = projectsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          collectionName = 'projects';
           break;
-
         case 'programs':
-          const programsSnapshot = await getDocs(query(collection(db, 'programs'), orderBy('created_at', 'desc')));
-          data = programsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          collectionName = 'programs';
           break;
-
         case 'sections':
-          const sectionsSnapshot = await getDocs(query(collection(db, 'sections'), orderBy('order', 'asc')));
-          setSections(sectionsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Section[]);
-          return;
-
-        case 'site':
-          const configSnapshot = await getDocs(collection(db, 'site_config'));
-          if (!configSnapshot.empty) {
-            setSiteConfig({ id: configSnapshot.docs[0].id, ...configSnapshot.docs[0].data() } as SiteConfig);
-          }
-          return;
+          collectionName = 'sections';
+          break;
       }
 
-      setContent(data || []);
+      if (collectionName) {
+        const q = query(collection(db, collectionName), orderBy('created_at', 'desc'));
+        const snapshot = await getDocs(q);
+        const items = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+
+        if (activeTab === 'sections') {
+          setSections(items as Section[]);
+        } else {
+          setContent(items as ContentItem[]);
+        }
+      }
+
+      // Fetch site config
+      if (activeTab === 'site') {
+        const configSnapshot = await getDocs(collection(db, 'site_config'));
+        if (!configSnapshot.empty) {
+          setSiteConfig({ id: configSnapshot.docs[0].id, ...configSnapshot.docs[0].data() } as SiteConfig);
+        }
+      }
     } catch (error) {
       console.error('Error fetching content:', error);
     }
@@ -108,6 +119,61 @@ export default function AdminPanel() {
     const success = await login(email, password);
     if (!success) {
       setLoginError('Invalid credentials');
+    }
+  };
+
+  const handleCreate = () => {
+    setEditingItem(null);
+    setIsCreating(true);
+  };
+
+  const handleEdit = (item: ContentItem) => {
+    setEditingItem(item);
+    setIsCreating(false);
+  };
+
+  const handleDelete = async (item: ContentItem) => {
+    if (!window.confirm('Are you sure you want to delete this item?')) return;
+
+    try {
+      const collectionName = `${activeTab === 'blog' ? 'blog_posts' : activeTab}`;
+      await deleteDoc(doc(db, collectionName, item.id));
+
+      // Delete associated image if it exists
+      if (item.image_path) {
+        await deleteFile(item.image_path);
+      }
+
+      fetchContent();
+    } catch (error) {
+      console.error('Error deleting item:', error);
+      alert('Failed to delete item');
+    }
+  };
+
+  const handleSubmit = async (data: any) => {
+    try {
+      const collectionName = `${activeTab === 'blog' ? 'blog_posts' : activeTab}`;
+      
+      if (isCreating) {
+        await addDoc(collection(db, collectionName), {
+          ...data,
+          created_at: new Date(),
+          updated_at: new Date()
+        });
+      } else if (editingItem) {
+        await updateDoc(doc(db, collectionName, editingItem.id), {
+          ...data,
+          updated_at: new Date()
+        });
+      }
+
+      setIsCreating(false);
+      setEditingItem(null);
+      fetchContent();
+    } catch (error) {
+      console.error('Error saving content:', error);
+      alert('Failed to save changes');
     }
   };
 
@@ -236,91 +302,162 @@ export default function AdminPanel() {
         </div>
 
         <div className="flex-1 overflow-auto p-8">
-          {activeTab === 'blog' && (
-            <div>
-              <h2 className="text-2xl font-bold mb-6">Blog Posts</h2>
-              <div className="space-y-4">
-                {content.map((post) => (
-                  <div key={post.id} className="bg-dark-lighter p-4 rounded-lg">
-                    <h3 className="text-xl font-semibold">{post.title}</h3>
-                    <p className="text-gray-400 mt-2">{post.description}</p>
-                  </div>
-                ))}
-              </div>
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-2xl font-bold">
+              {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
+            </h2>
+            {activeTab !== 'site' && activeTab !== 'media' && (
+              <button
+                onClick={handleCreate}
+                className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
+              >
+                <Plus size={20} />
+                <span>Create New</span>
+              </button>
+            )}
+          </div>
+
+          {(isCreating || editingItem) && activeTab !== 'site' && activeTab !== 'media' ? (
+            <div className="bg-dark-lighter p-6 rounded-lg">
+              <ContentForm
+                type={activeTab === 'blog' ? 'blog' : activeTab === 'projects' ? 'project' : 'program'}
+                initialData={editingItem}
+                onSubmit={handleSubmit}
+              />
             </div>
-          )}
-          {activeTab === 'projects' && (
-            <div>
-              <h2 className="text-2xl font-bold mb-6">Projects</h2>
-              <div className="space-y-4">
-                {content.map((project) => (
-                  <div key={project.id} className="bg-dark-lighter p-4 rounded-lg">
-                    <h3 className="text-xl font-semibold">{project.title}</h3>
-                    <p className="text-gray-400 mt-2">{project.description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-          {activeTab === 'programs' && (
-            <div>
-              <h2 className="text-2xl font-bold mb-6">Programs</h2>
-              <div className="space-y-4">
-                {content.map((program) => (
-                  <div key={program.id} className="bg-dark-lighter p-4 rounded-lg">
-                    <h3 className="text-xl font-semibold">{program.title}</h3>
-                    <p className="text-gray-400 mt-2">{program.description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-          {activeTab === 'sections' && (
-            <div>
-              <h2 className="text-2xl font-bold mb-6">Page Sections</h2>
-              <div className="space-y-4">
-                {sections.map((section) => (
-                  <div key={section.id} className="bg-dark-lighter p-4 rounded-lg">
-                    <h3 className="text-xl font-semibold">{section.title}</h3>
-                    <div className="mt-2" dangerouslySetInnerHTML={{ __html: section.content }} />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-          {activeTab === 'site' && siteConfig && (
-            <div>
-              <h2 className="text-2xl font-bold mb-6">Site Settings</h2>
-              <div className="bg-dark-lighter p-6 rounded-lg">
-                <h3 className="text-xl font-semibold mb-4">{siteConfig.name}</h3>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Meta Title</label>
-                    <input
-                      type="text"
-                      value={siteConfig.meta_title || ''}
-                      className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Meta Description</label>
-                    <textarea
-                      value={siteConfig.meta_description || ''}
-                      className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
-                      rows={3}
-                    />
+          ) : (
+            <>
+              {activeTab !== 'site' && activeTab !== 'media' && (
+                <div className="grid gap-6">
+                  {content.map((item) => (
+                    <div key={item.id} className="bg-dark-lighter p-6 rounded-lg">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
+                          <p className="text-gray-400">{item.description}</p>
+                        </div>
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => handleEdit(item)}
+                            className="p-2 text-gray-400 hover:text-primary"
+                          >
+                            <Edit size={20} />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(item)}
+                            className="p-2 text-gray-400 hover:text-red-500"
+                          >
+                            <Trash2 size={20} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {activeTab === 'site' && siteConfig && (
+                <div className="bg-dark-lighter p-6 rounded-lg">
+                  <form className="space-y-6">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Site Name</label>
+                      <input
+                        type="text"
+                        value={siteConfig.name}
+                        onChange={(e) => setSiteConfig({ ...siteConfig, name: e.target.value })}
+                        className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
+                      />
+                    </div>
+                    
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium mb-2">Meta Title</label>
+                        <input
+                          type="text"
+                          value={siteConfig.meta_title || ''}
+                          onChange={(e) => setSiteConfig({ ...siteConfig, meta_title: e.target.value })}
+                          className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium mb-2">Meta Description</label>
+                        <textarea
+                          value={siteConfig.meta_description || ''}
+                          onChange={(e) => setSiteConfig({ ...siteConfig, meta_description: e.target.value })}
+                          className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
+                          rows={3}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium mb-2">Logo</label>
+                        <MediaUploader
+                          onUploadComplete={(url) => setSiteConfig({ ...siteConfig, logo_url: url })}
+                          folder="site"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium mb-2">Favicon</label>
+                        <MediaUploader
+                          onUploadComplete={(url) => setSiteConfig({ ...siteConfig, favicon_url: url })}
+                          folder="site"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <h3 className="text-lg font-medium mb-4">Social Links</h3>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        {Object.entries(siteConfig.social_links || {}).map(([platform, url]) => (
+                          <div key={platform}>
+                            <label className="block text-sm font-medium mb-2 capitalize">{platform}</label>
+                            <input
+                              type="url"
+                              value={url || ''}
+                              onChange={(e) => setSiteConfig({
+                                ...siteConfig,
+                                social_links: {
+                                  ...siteConfig.social_links,
+                                  [platform]: e.target.value
+                                }
+                              })}
+                              className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="w-full bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded transition-colors"
+                    >
+                      Save Changes
+                    </button>
+                  </form>
+                </div>
+              )}
+
+              {activeTab === 'media' && (
+                <div className="space-y-6">
+                  <MediaUploader
+                    onUploadComplete={(url) => {
+                      // Handle media upload
+                      console.log('Uploaded:', url);
+                    }}
+                    folder="media"
+                  />
+                  
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {/* Media items would go here */}
                   </div>
                 </div>
-              </div>
-            </div>
-          )}
-          {activeTab === 'media' && (
-            <div>
-              <h2 className="text-2xl font-bold mb-6">Media Library</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {/* Media items would go here */}
-              </div>
-            </div>
+              )}
+            </>
           )}
         </div>
       </div>

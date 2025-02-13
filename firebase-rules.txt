@@ -1,0 +1,68 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Allow read access to all files
+    match /{allPaths=**} {
+      allow read: if true;
+    }
+    
+    // Allow write access only to authenticated users
+    match /uploads/{fileName} {
+      allow write: if request.auth != null 
+        && request.resource.size < 5 * 1024 * 1024 // 5MB max
+        && request.resource.contentType.matches('image/.*');
+    }
+    
+    // Allow admin users to delete files
+    match /{allPaths=**} {
+      allow delete: if request.auth != null 
+        && request.auth.token.email == 'admin@fidipa.org';
+    }
+  }
+}
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email == 'admin@fidipa.org';
+    }
+    
+    // Blog posts collection
+    match /blog_posts/{postId} {
+      // Anyone can read published posts
+      allow read: if true;
+      
+      // Writers can create posts (they'll be in draft status)
+      allow create: if request.auth != null 
+        && request.resource.data.status == 'draft';
+      
+      // Only admins can publish/update/delete posts
+      allow update, delete: if isAdmin();
+    }
+    
+    // Projects collection
+    match /projects/{projectId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Programs collection
+    match /programs/{programId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Sections collection
+    match /sections/{sectionId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Site configuration
+    match /site_config/{configId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}
