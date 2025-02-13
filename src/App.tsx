@@ -17,7 +17,7 @@ function AppContent() {
   const showNavbar = location.pathname === '/';
 
   return (
-    <div className="min-h-screen bg-dark text-white">
+    <div className="min-h-screen bg-white dark:bg-dark text-dark dark:text-white">
       {showNavbar && <Navbar />}
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -42,4 +42,4 @@ function App() {
   );
 }
 
-export default App;
+export default App

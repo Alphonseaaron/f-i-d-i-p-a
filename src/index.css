@@ -4,40 +4,67 @@
 
 .ql-editor {
   min-height: 200px;
-  color: white;
+  @apply text-gray-800 dark:text-white;
 }
 
 .ql-toolbar {
-  border-bottom: 1px solid #4a4a4a !important;
-  background: #2d2d2d;
+  @apply border-gray-200 dark:border-gray-600 border-b bg-gray-50 dark:bg-dark-lighter;
 }
 
 .ql-toolbar button {
-  color: white !important;
+  @apply text-gray-700 dark:text-white;
 }
 
 .ql-toolbar button:hover {
-  color: #10b981 !important;
+  @apply text-primary;
 }
 
 .ql-formats {
-  border-right: 1px solid #4a4a4a;
-  padding-right: 8px;
-  margin-right: 8px;
+  @apply border-r border-gray-200 dark:border-gray-600 pr-2 mr-2;
 }
 
 .prose {
-  color: #d1d5db;
+  @apply text-gray-600 dark:text-gray-300;
 }
 
 .prose h1, .prose h2, .prose h3, .prose h4 {
-  color: white;
+  @apply text-gray-900 dark:text-white;
 }
 
 .prose a {
-  color: #10b981;
+  @apply text-primary;
 }
 
 .prose strong {
-  color: white;
+  @apply text-gray-900 dark:text-white;
+}
+
+/* Light mode scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400;
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-track {
+  @apply bg-dark-lighter;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  @apply bg-dark-accent;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-600;
 }

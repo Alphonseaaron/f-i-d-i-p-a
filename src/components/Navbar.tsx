@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Sun, Moon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTheme } from '../hooks/useTheme';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
+  const { theme, toggleTheme } = useTheme();
 
   const menuItems = [
     { title: 'Home', id: 'home' },
@@ -55,12 +57,12 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed w-full z-50 bg-gradient-to-b from-dark/95 to-dark/80 backdrop-blur-sm">
+    <nav className="fixed w-full z-50 bg-white/95 dark:bg-dark/95 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <motion.button 
             onClick={() => scrollToSection('home')}
-            className="text-white font-bold text-xl"
+            className="text-dark dark:text-white font-bold text-xl"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -68,8 +70,8 @@ export default function Navbar() {
           </motion.button>
 
           {/* Desktop Menu */}
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-4">
+          <div className="hidden md:flex items-center space-x-4">
+            <div className="flex items-baseline space-x-4">
               {menuItems.map((item) => (
                 <motion.button
                   key={item.id}
@@ -77,7 +79,7 @@ export default function Navbar() {
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 relative ${
                     activeSection === item.id
                       ? 'text-primary'
-                      : 'text-gray-300 hover:text-white'
+                      : 'text-gray-600 dark:text-gray-300 hover:text-dark dark:hover:text-white'
                   }`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -94,17 +96,44 @@ export default function Navbar() {
                 </motion.button>
               ))}
             </div>
+            <motion.button
+              onClick={toggleTheme}
+              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-dark-lighter transition-colors"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-5 h-5 text-primary" />
+              ) : (
+                <Moon className="w-5 h-5 text-primary" />
+              )}
+            </motion.button>
           </div>
 
           {/* Mobile menu button */}
-          <motion.button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden text-gray-300 hover:text-white p-2"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
-          </motion.button>
+          <div className="md:hidden flex items-center space-x-2">
+            <motion.button
+              onClick={toggleTheme}
+              className="p-2 text-gray-600 dark:text-gray-300 hover:text-dark dark:hover:text-white"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-5 h-5" />
+              ) : (
+                <Moon className="w-5 h-5" />
+              )}
+            </motion.button>
+            <motion.button
+              onClick={() => setIsOpen(!isOpen)}
+              className="text-gray-600 dark:text-gray-300 hover:text-dark dark:hover:text-white p-2"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
+            </motion.button>
+          </div>
         </div>
       </div>
 
@@ -115,7 +144,7 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-gradient-to-b from-dark-lighter/95 to-dark-lighter/80 backdrop-blur-sm"
+            className="md:hidden bg-white/95 dark:bg-dark-lighter/95 backdrop-blur-sm"
           >
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
               {menuItems.map((item) => (
@@ -124,8 +153,8 @@ export default function Navbar() {
                   onClick={() => scrollToSection(item.id)}
                   className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium ${
                     activeSection === item.id
-                      ? 'text-primary bg-dark-accent/50'
-                      : 'text-gray-300 hover:text-white hover:bg-dark-accent/30'
+                      ? 'text-primary bg-gray-100/50 dark:bg-dark-accent/50'
+                      : 'text-gray-600 dark:text-gray-300 hover:text-dark dark:hover:text-white hover:bg-gray-100/30 dark:hover:bg-dark-accent/30'
                   }`}
                   whileHover={{ x: 10 }}
                   whileTap={{ scale: 0.95 }}

@@ -21,7 +21,7 @@ export default function About() {
   ];
 
   return (
-    <section id="about" className="py-32 bg-gradient-to-b from-dark-lighter via-dark to-dark-lighter min-h-screen flex items-center">
+    <section id="about" className="py-32 bg-gradient-to-b from-light-darker via-light to-light-darker dark:from-dark-lighter dark:via-dark dark:to-dark-lighter min-h-screen flex items-center">
       <div className="max-w-7xl mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -29,8 +29,8 @@ export default function About() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl font-bold mb-6">About Us</h2>
-          <p className="text-gray-300 text-lg leading-relaxed max-w-3xl mx-auto">
+          <h2 className="text-4xl font-bold mb-6 text-gray-900 dark:text-white">About Us</h2>
+          <p className="text-gray-600 dark:text-gray-300 text-lg leading-relaxed max-w-3xl mx-auto">
             Friendly Integrated Development Initiative in Poverty Alleviation (FIDIPA) 
             is a Non-Governmental Organization (NGO) in Kenya registered under the NGO 
             Act as a National NGO. The organization has a high profiled advisory Board 
@@ -47,7 +47,7 @@ export default function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.2 }}
-              className="bg-gradient-to-br from-dark-lighter/50 to-dark-accent/30 backdrop-blur-sm p-8 rounded-lg border border-gray-800 hover:border-primary/30 transition-colors group"
+              className="bg-white dark:bg-dark-lighter/50 shadow-lg dark:shadow-none backdrop-blur-sm p-8 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-primary/30 transition-colors group"
             >
               <motion.div
                 initial={{ scale: 1 }}
@@ -56,10 +56,10 @@ export default function About() {
               >
                 {item.icon}
               </motion.div>
-              <h3 className="text-xl font-semibold mb-4 group-hover:text-primary transition-colors">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white group-hover:text-primary transition-colors">
                 {item.title}
               </h3>
-              <p className="text-gray-300">
+              <p className="text-gray-600 dark:text-gray-300">
                 {item.description}
               </p>
             </motion.div>
@@ -84,10 +84,10 @@ export default function About() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="bg-gradient-to-br from-primary/10 to-primary/5 p-6 rounded-lg"
+              className="bg-gradient-to-br from-primary/10 to-primary/5 p-6 rounded-lg shadow-lg dark:shadow-none"
             >
               <h4 className="text-3xl font-bold text-primary mb-2">{stat.number}</h4>
-              <p className="text-gray-300">{stat.label}</p>
+              <p className="text-gray-600 dark:text-gray-300">{stat.label}</p>
             </motion.div>
           ))}
         </motion.div>
