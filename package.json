@@ -20,8 +20,6 @@
     "@hookform/resolvers": "^3.3.4",
     "react-hook-form": "^7.51.0",
     "zod": "^3.22.4",
-    "@netlify/functions": "^2.6.0",
-    "@netlify/sdk": "^1.0.0",
     "nanoid": "^5.0.6"
   },
   "devDependencies": {

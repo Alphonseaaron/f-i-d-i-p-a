@@ -1,3 +1,5 @@
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from './firebase';
 import { nanoid } from 'nanoid';
 
 interface UploadResponse {
@@ -11,24 +13,17 @@ export async function uploadFile(file: File): Promise<UploadResponse> {
     const fileExtension = file.name.split('.').pop();
     const uniqueFilename = `${nanoid()}.${fileExtension}`;
     
-    // Create form data
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('filename', uniqueFilename);
-
-    // Upload to Netlify Function
-    const response = await fetch('/.netlify/functions/upload', {
-      method: 'POST',
-      body: formData
-    });
-
-    if (!response.ok) {
-      throw new Error('Upload failed');
-    }
-
-    const data = await response.json();
+    // Create storage reference
+    const storageRef = ref(storage, `uploads/${uniqueFilename}`);
+    
+    // Upload file
+    await uploadBytes(storageRef, file);
+    
+    // Get download URL
+    const url = await getDownloadURL(storageRef);
+    
     return {
-      url: data.url,
+      url,
       key: uniqueFilename
     };
   } catch (error) {

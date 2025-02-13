@@ -1,61 +1,56 @@
 import { useState, useEffect } from 'react';
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, User } from 'firebase/auth';
+import app from './firebase';
 
-const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || 'admin@fidipa.org';
-const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || '123Fidipa#';
+const auth = getAuth(app);
 
 interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
+  user: User | null;
 }
 
 export function useAuth() {
   const [authState, setAuthState] = useState<AuthState>({
     isAuthenticated: false,
     isLoading: true,
-    error: null
+    error: null,
+    user: null
   });
 
   useEffect(() => {
-    const session = localStorage.getItem('fidipa_session');
-    setAuthState({
-      isAuthenticated: !!session,
-      isLoading: false,
-      error: null
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setAuthState({
+        isAuthenticated: !!user,
+        isLoading: false,
+        error: null,
+        user
+      });
     });
+
+    return () => unsubscribe();
   }, []);
 
   const login = async (email: string, password: string) => {
     try {
-      if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-        const session = { email, timestamp: Date.now() };
-        localStorage.setItem('fidipa_session', JSON.stringify(session));
-        setAuthState({
-          isAuthenticated: true,
-          isLoading: false,
-          error: null
-        });
-        return true;
-      } else {
-        throw new Error('Invalid credentials');
-      }
+      await signInWithEmailAndPassword(auth, email, password);
+      return true;
     } catch (error) {
-      setAuthState({
-        isAuthenticated: false,
-        isLoading: false,
+      setAuthState(prev => ({
+        ...prev,
         error: 'Invalid credentials'
-      });
+      }));
       return false;
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('fidipa_session');
-    setAuthState({
-      isAuthenticated: false,
-      isLoading: false,
-      error: null
-    });
+  const logout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
   };
 
   return {
