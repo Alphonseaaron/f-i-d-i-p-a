@@ -6,8 +6,8 @@ import { z } from 'zod';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { collection, addDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '../lib/firebase';
+import { db } from '../lib/firebase';
+import { uploadFile } from '../lib/storage';
 import BackButton from '../components/BackButton';
 
 const schema = z.object({
@@ -30,12 +30,6 @@ export default function WriteForUs() {
     resolver: zodResolver(schema)
   });
 
-  const handleFileUpload = async (file: File, path: string) => {
-    const storageRef = ref(storage, path);
-    const snapshot = await uploadBytes(storageRef, file);
-    return getDownloadURL(snapshot.ref);
-  };
-
   const onSubmit = async (data: FormData) => {
     if (!content) {
       alert('Please add some content to your article');
@@ -54,21 +48,18 @@ export default function WriteForUs() {
 
     setSubmitting(true);
     try {
-      const coverImageUrl = await handleFileUpload(
-        coverImage,
-        `blog-images/${Date.now()}-${coverImage.name}`
-      );
-      
-      const authorPhotoUrl = await handleFileUpload(
-        authorPhoto,
-        `author-photos/${Date.now()}-${authorPhoto.name}`
-      );
+      // Upload images to Netlify
+      const [coverImageResponse, authorPhotoResponse] = await Promise.all([
+        uploadFile(coverImage),
+        uploadFile(authorPhoto)
+      ]);
 
+      // Save to Firestore
       await addDoc(collection(db, 'blog_posts'), {
         ...data,
         content,
-        imageUrl: coverImageUrl,
-        authorPhoto: authorPhotoUrl,
+        imageUrl: coverImageResponse.url,
+        authorPhoto: authorPhotoResponse.url,
         status: 'pending',
         createdAt: new Date(),
       });

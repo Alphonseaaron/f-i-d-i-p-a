@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Settings, FileImage, Layout, BookOpen, Target, Users } from 'lucide-react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { collection, query, orderBy, getDocs, updateDoc, doc, addDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { onAuthStateChanged } from 'firebase/auth';
-import { db, storage, auth } from '../../lib/firebase';
+import { db } from '../../lib/firebase';
+import { useAuth } from '../../lib/auth';
+import { uploadFile } from '../../lib/storage';
 
 interface ContentItem {
   id: string;
@@ -48,30 +47,21 @@ interface Section {
 }
 
 export default function AdminPanel() {
-  const navigate = useNavigate();
-  const [session, setSession] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { isAuthenticated, isLoading, login, logout } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
   const [activeTab, setActiveTab] = useState<'blog' | 'projects' | 'programs' | 'site' | 'sections' | 'media'>('blog');
   const [content, setContent] = useState<ContentItem[]>([]);
   const [siteConfig, setSiteConfig] = useState<SiteConfig | null>(null);
   const [sections, setSections] = useState<Section[]>([]);
   const [editingItem, setEditingItem] = useState<ContentItem | null>(null);
-  const [uploadProgress, setUploadProgress] = useState(0);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setSession(user);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    if (session) {
+    if (isAuthenticated) {
       fetchContent();
     }
-  }, [session, activeTab]);
+  }, [isAuthenticated, activeTab]);
 
   const fetchContent = async () => {
     try {
@@ -112,42 +102,16 @@ export default function AdminPanel() {
     }
   };
 
-  const handleFileUpload = async (file: File) => {
-    try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `${activeTab}/${fileName}`;
-      const storageRef = ref(storage, filePath);
-
-      await uploadBytes(storageRef, file);
-      const url = await getDownloadURL(storageRef);
-
-      return url;
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      throw error;
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError('');
+    const success = await login(email, password);
+    if (!success) {
+      setLoginError('Invalid credentials');
     }
   };
 
-  const handleUpdateContent = async (item: ContentItem) => {
-    try {
-      const collectionName = activeTab === 'blog' ? 'blog_posts' : 
-                            activeTab === 'projects' ? 'projects' : 'programs';
-
-      await updateDoc(doc(db, collectionName, item.id), {
-        ...item,
-        updated_at: new Date()
-      });
-
-      fetchContent();
-      setEditingItem(null);
-    } catch (error) {
-      console.error('Error updating content:', error);
-      alert('Failed to update content');
-    }
-  };
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-dark flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
@@ -155,20 +119,44 @@ export default function AdminPanel() {
     );
   }
 
-  if (!session) {
+  if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-dark">
         <div className="bg-dark-lighter p-8 rounded-lg w-full max-w-md">
           <h2 className="text-2xl font-bold mb-6 text-center">Admin Access</h2>
-          <p className="text-center text-gray-300 mb-4">
-            Please sign in through Netlify to access the admin panel.
-          </p>
-          <button
-            onClick={() => navigate('/admin')}
-            className="w-full bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded transition-colors"
-          >
-            Sign In with Netlify
-          </button>
+          {loginError && (
+            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded text-red-500 text-center">
+              {loginError}
+            </div>
+          )}
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">Email</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded transition-colors"
+            >
+              Sign In
+            </button>
+          </form>
         </div>
       </div>
     );
@@ -239,7 +227,7 @@ export default function AdminPanel() {
           </div>
           <div className="absolute bottom-0 w-64 p-4 border-t border-gray-800">
             <button
-              onClick={() => auth.signOut()}
+              onClick={logout}
               className="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
             >
               Logout
@@ -248,163 +236,89 @@ export default function AdminPanel() {
         </div>
 
         <div className="flex-1 overflow-auto p-8">
-          {activeTab === 'site' && siteConfig && (
-            <div className="bg-dark-lighter p-6 rounded-lg">
-              <h2 className="text-xl font-semibold mb-6">Site Configuration</h2>
+          {activeTab === 'blog' && (
+            <div>
+              <h2 className="text-2xl font-bold mb-6">Blog Posts</h2>
               <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">Site Name</label>
-                  <input
-                    type="text"
-                    value={siteConfig.name}
-                    onChange={(e) => setSiteConfig({ ...siteConfig, name: e.target.value })}
-                    className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Meta Title</label>
-                  <input
-                    type="text"
-                    value={siteConfig.meta_title}
-                    onChange={(e) => setSiteConfig({ ...siteConfig, meta_title: e.target.value })}
-                    className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Meta Description</label>
-                  <textarea
-                    value={siteConfig.meta_description}
-                    onChange={(e) => setSiteConfig({ ...siteConfig, meta_description: e.target.value })}
-                    className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
-                    rows={3}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Social Links</label>
-                  <div className="grid grid-cols-2 gap-4">
-                    {Object.entries(siteConfig.social_links).map(([platform, url]) => (
-                      <div key={platform}>
-                        <label className="block text-sm font-medium mb-2 capitalize">{platform}</label>
-                        <input
-                          type="url"
-                          value={url}
-                          onChange={(e) => setSiteConfig({
-                            ...siteConfig,
-                            social_links: { ...siteConfig.social_links, [platform]: e.target.value }
-                          })}
-                          className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
-                        />
-                      </div>
-                    ))}
+                {content.map((post) => (
+                  <div key={post.id} className="bg-dark-lighter p-4 rounded-lg">
+                    <h3 className="text-xl font-semibold">{post.title}</h3>
+                    <p className="text-gray-400 mt-2">{post.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {activeTab === 'projects' && (
+            <div>
+              <h2 className="text-2xl font-bold mb-6">Projects</h2>
+              <div className="space-y-4">
+                {content.map((project) => (
+                  <div key={project.id} className="bg-dark-lighter p-4 rounded-lg">
+                    <h3 className="text-xl font-semibold">{project.title}</h3>
+                    <p className="text-gray-400 mt-2">{project.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {activeTab === 'programs' && (
+            <div>
+              <h2 className="text-2xl font-bold mb-6">Programs</h2>
+              <div className="space-y-4">
+                {content.map((program) => (
+                  <div key={program.id} className="bg-dark-lighter p-4 rounded-lg">
+                    <h3 className="text-xl font-semibold">{program.title}</h3>
+                    <p className="text-gray-400 mt-2">{program.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {activeTab === 'sections' && (
+            <div>
+              <h2 className="text-2xl font-bold mb-6">Page Sections</h2>
+              <div className="space-y-4">
+                {sections.map((section) => (
+                  <div key={section.id} className="bg-dark-lighter p-4 rounded-lg">
+                    <h3 className="text-xl font-semibold">{section.title}</h3>
+                    <div className="mt-2" dangerouslySetInnerHTML={{ __html: section.content }} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {activeTab === 'site' && siteConfig && (
+            <div>
+              <h2 className="text-2xl font-bold mb-6">Site Settings</h2>
+              <div className="bg-dark-lighter p-6 rounded-lg">
+                <h3 className="text-xl font-semibold mb-4">{siteConfig.name}</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Meta Title</label>
+                    <input
+                      type="text"
+                      value={siteConfig.meta_title || ''}
+                      className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Meta Description</label>
+                    <textarea
+                      value={siteConfig.meta_description || ''}
+                      className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
+                      rows={3}
+                    />
                   </div>
                 </div>
               </div>
             </div>
           )}
-
-          {(activeTab === 'blog' || activeTab === 'projects' || activeTab === 'programs') && (
-            <div className="space-y-6">
-              {content.map((item) => (
-                <div key={item.id} className="bg-dark-lighter p-6 rounded-lg">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 className="text-xl font-semibold">{item.title}</h3>
-                      {item.author && (
-                        <div className="flex items-center mt-2">
-                          {item.author_photo && (
-                            <img
-                              src={item.author_photo}
-                              alt={item.author}
-                              className="w-10 h-10 rounded-full mr-3"
-                            />
-                          )}
-                          <div>
-                            <p className="text-gray-400">By {item.author}</p>
-                            {item.author_bio && (
-                              <p className="text-sm text-gray-500">{item.author_bio}</p>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => setEditingItem(item)}
-                        className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleUpdateContent({ ...item, status: 'published' })}
-                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
-                      >
-                        Publish
-                      </button>
-                    </div>
-                  </div>
-                  {item.image_url && (
-                    <img
-                      src={item.image_url}
-                      alt={item.title}
-                      className="w-full h-48 object-cover rounded-lg mb-4"
-                    />
-                  )}
-                  <div className="prose prose-invert max-w-none">
-                    {item.content || item.description}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {activeTab === 'sections' && (
-            <div className="space-y-6">
-              {sections.map((section) => (
-                <div key={section.id} className="bg-dark-lighter p-6 rounded-lg">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-xl font-semibold">{section.title}</h3>
-                    <button
-                      onClick={() => setEditingItem(section)}
-                      className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded"
-                    >
-                      Edit
-                    </button>
-                  </div>
-                  <div className="prose prose-invert max-w-none">
-                    {section.content}
-                  </div>
-                  {section.image_url && (
-                    <img
-                      src={section.image_url}
-                      alt={section.title}
-                      className="mt-4 rounded-lg max-h-48 object-cover"
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-
           {activeTab === 'media' && (
-            <div className="space-y-6">
-              <div className="bg-dark-lighter p-6 rounded-lg">
-                <h2 className="text-xl font-semibold mb-4">Upload Media</h2>
-                <input
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  onChange={async (e) => {
-                    const files = Array.from(e.target.files || []);
-                    for (const file of files) {
-                      try {
-                        await handleFileUpload(file);
-                      } catch (error) {
-                        console.error('Error uploading file:', error);
-                      }
-                    }
-                  }}
-                  className="w-full p-2 rounded bg-dark border border-gray-600 text-white"
-                />
+            <div>
+              <h2 className="text-2xl font-bold mb-6">Media Library</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Media items would go here */}
               </div>
             </div>
           )}
