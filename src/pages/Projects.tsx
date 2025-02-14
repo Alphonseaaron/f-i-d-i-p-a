@@ -38,13 +38,13 @@ const projects = [
 
 export default function Projects() {
   return (
-    <div className="pt-24 pb-16 min-h-screen bg-dark">
+    <div className="pt-24 pb-16 min-h-screen bg-light dark:bg-dark">
       <BackButton />
       <div className="max-w-7xl mx-auto px-4">
         <motion.h1 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-4xl font-bold mb-12 text-center"
+          className="text-4xl font-bold mb-12 text-center text-gray-900 dark:text-white"
         >
           Our Projects
         </motion.h1>
@@ -56,21 +56,25 @@ export default function Projects() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-dark-lighter rounded-lg overflow-hidden transform transition-transform hover:-translate-y-1"
+              className="bg-white dark:bg-dark-lighter rounded-lg overflow-hidden shadow-lg hover:shadow-xl dark:shadow-none transform transition-all duration-300 hover:-translate-y-1 group"
             >
               <div className="relative h-48 overflow-hidden">
                 <img 
                   src={project.imageUrl} 
                   alt={project.title}
-                  className="w-full h-full object-cover transition-transform hover:scale-105"
+                  className="w-full h-full object-cover transition-transform group-hover:scale-105"
                 />
-                <div className="absolute top-4 right-4 bg-primary px-3 py-1 rounded-full text-sm font-medium">
+                <div className="absolute top-4 right-4 bg-primary px-3 py-1 rounded-full text-sm font-medium text-white">
                   {project.status}
                 </div>
               </div>
               <div className="p-6">
-                <h3 className="text-xl font-semibold mb-3">{project.title}</h3>
-                <p className="text-gray-300 mb-4">{project.description}</p>
+                <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-primary dark:group-hover:text-primary transition-colors">
+                  {project.title}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                  {project.description}
+                </p>
                 <Link 
                   to={`/projects/${project.title.toLowerCase().replace(/\s+/g, '-')}`}
                   className="text-primary hover:text-primary/80 transition-colors flex items-center"

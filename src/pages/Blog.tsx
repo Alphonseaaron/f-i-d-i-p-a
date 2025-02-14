@@ -6,21 +6,21 @@ import BackButton from '../components/BackButton';
 const blogPosts = [
   {
     title: "Empowering Communities Through Sustainable Development",
-    content: "Exploring how sustainable development practices are transforming rural communities and creating lasting positive change...",
+    content: "Our sustainable development initiatives are transforming rural communities through innovative approaches to poverty alleviation, environmental conservation, and economic empowerment. By implementing participatory development strategies and building local capacity, we're creating lasting positive change that benefits entire communities. Our programs focus on sustainable agriculture, renewable energy, and community-led development projects that ensure long-term success and self-sufficiency.",
     author: "Sarah Johnson",
     date: "2024-02-15",
     imageUrl: "/images/DSC05379.JPG"
   },
   {
     title: "The Impact of Gender Equality Programs",
-    content: "Examining the transformative effects of our gender equality initiatives on communities and individual lives...",
+    content: "Our gender equality initiatives have shown remarkable success in transforming communities and individual lives. Through targeted programs focusing on women's economic empowerment, leadership development, and access to education, we're breaking down traditional barriers and creating new opportunities. The programs have led to increased women's participation in community decision-making, improved economic outcomes, and stronger, more equitable communities.",
     author: "Michael Chen",
     date: "2024-02-10",
     imageUrl: "/images/SAM_0790.JPG"
   },
   {
     title: "Innovation in Rural Healthcare Delivery",
-    content: "Discovering new approaches to delivering healthcare services in remote and underserved areas...",
+    content: "We're revolutionizing healthcare delivery in remote and underserved areas through innovative approaches and community partnerships. By combining mobile health clinics, telemedicine solutions, and community health worker training, we're bringing essential medical services to previously unreached populations. Our integrated approach ensures sustainable healthcare access while building local capacity for long-term health management.",
     author: "Dr. Emily Roberts",
     date: "2024-02-05",
     imageUrl: "/images/IMG_20141007_172002.jpg"
@@ -29,13 +29,13 @@ const blogPosts = [
 
 export default function Blog() {
   return (
-    <div className="pt-24 pb-16 min-h-screen bg-dark">
+    <div className="pt-24 pb-16 min-h-screen bg-light dark:bg-dark">
       <BackButton />
       <div className="max-w-7xl mx-auto px-4">
         <motion.h1 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-4xl font-bold mb-12 text-center"
+          className="text-4xl font-bold mb-12 text-center text-gray-900 dark:text-white"
         >
           Blog
         </motion.h1>
@@ -47,25 +47,25 @@ export default function Blog() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-dark-lighter rounded-lg overflow-hidden"
+              className="bg-white dark:bg-dark-lighter rounded-lg overflow-hidden shadow-lg hover:shadow-xl dark:shadow-none transition-all duration-300 group"
             >
               <div className="h-48 overflow-hidden">
                 <img 
                   src={post.imageUrl} 
                   alt={post.title}
-                  className="w-full h-full object-cover transition-transform hover:scale-105"
+                  className="w-full h-full object-cover transition-transform group-hover:scale-105"
                 />
               </div>
               <div className="p-6">
-                <h2 className="text-xl font-semibold mb-3">{post.title}</h2>
-                <p className="text-gray-300 mb-4">{post.content}</p>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <span className="text-gray-400">{post.author}</span>
-                  </div>
-                  <span className="text-sm text-gray-400">
-                    {new Date(post.date).toLocaleDateString()}
-                  </span>
+                <h2 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-primary dark:group-hover:text-primary transition-colors">
+                  {post.title}
+                </h2>
+                <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
+                  {post.content}
+                </p>
+                <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                  <span>{post.author}</span>
+                  <span>{new Date(post.date).toLocaleDateString()}</span>
                 </div>
                 <Link 
                   to={`/blog/${post.title.toLowerCase().replace(/\s+/g, '-')}`}
