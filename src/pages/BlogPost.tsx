@@ -8,7 +8,7 @@ const blogPosts = {
     title: "Empowering Communities Through Sustainable Development",
     content: `Our sustainable development initiatives are transforming rural communities through innovative approaches to poverty alleviation, environmental conservation, and economic empowerment. By implementing participatory development strategies and building local capacity, we're creating lasting positive change that benefits entire communities.
 
-    Key Focus Areas:
+    Program Components:
 
     • Sustainable Agriculture
       - Introducing climate-smart farming techniques
@@ -96,9 +96,9 @@ const blogPosts = {
       - Quality control systems
 
     Through these comprehensive efforts, we're building resilient communities that can sustainably manage their resources and continue developing long after our initial intervention.`,
-    author: "Sarah Johnson",
+    author: "Jayne Wasonga",
     date: "2024-02-15",
-    imageUrl: "/images/DSC05379.JPG"
+    imageUrl: "/src/assets/images/DSC05379.JPG"
   },
   'the-impact-of-gender-equality-programs': {
     title: "The Impact of Gender Equality Programs",
@@ -215,9 +215,9 @@ const blogPosts = {
       - Local ownership
       - System strengthening
       - Impact measurement`,
-    author: "Michael Chen",
+    author: "Jayne Wasonga",
     date: "2024-02-10",
-    imageUrl: "/images/SAM_0790.JPG"
+    imageUrl: "/src/assets/images/SAM_0790.JPG"
   },
   'innovation-in-rural-healthcare-delivery': {
     title: "Innovation in Rural Healthcare Delivery",
@@ -334,9 +334,9 @@ const blogPosts = {
       - Facility upgrades
       - System improvements
       - Research initiatives`,
-    author: "Dr. Emily Roberts",
+    author: "Jayne Wasonga",
     date: "2024-02-05",
-    imageUrl: "/images/IMG_20141007_172002.jpg"
+    imageUrl: "/src/assets/images/IMG_20141007_172002.jpg"
   }
 };
 
@@ -393,12 +393,12 @@ export default function BlogPost() {
                 if (section.trim().startsWith('•')) {
                   const lines = section.trim().split('\n');
                   return (
-                    <div key={index} className="pl-4 mb-4">
+                    <div key={index} className="bg-white dark:bg-dark-lighter p-6 rounded-lg shadow-sm mb-6">
                       {lines.map((line, lineIndex) => {
                         if (line.trim().startsWith('-')) {
                           return (
-                            <div key={lineIndex} className="flex items-start space-x-2 ml-6 mb-1">
-                              <div className="w-1.5 h-1.5 rounded-full bg-primary/60 dark:bg-primary/40 mt-2"></div>
+                            <div key={lineIndex} className="flex items-start space-x-3 ml-8 mb-2">
+                              <div className="w-2 h-2 rounded-full bg-primary/60 mt-2"></div>
                               <p className="text-gray-600 dark:text-gray-300 flex-1">
                                 {line.replace('-', '').trim()}
                               </p>
@@ -406,9 +406,9 @@ export default function BlogPost() {
                           );
                         }
                         return (
-                          <div key={lineIndex} className="flex items-start space-x-3 mb-2">
-                            <div className="w-2 h-2 rounded-full bg-primary mt-2"></div>
-                            <p className="text-gray-700 dark:text-gray-200 font-medium flex-1">
+                          <div key={lineIndex} className="flex items-start space-x-3 mb-3">
+                            <div className="w-3 h-3 rounded-full bg-primary mt-1.5"></div>
+                            <p className="text-gray-800 dark:text-gray-100 font-medium flex-1">
                               {line.replace('•', '').trim()}
                             </p>
                           </div>

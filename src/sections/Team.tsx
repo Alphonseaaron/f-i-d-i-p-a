@@ -143,17 +143,21 @@ function TeamCarousel({ members }: { members: typeof staffMembers }) {
               exit={{ opacity: 0, x: -100 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="flex-1 min-w-0 bg-white dark:bg-dark-lighter rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow border border-gray-200 dark:border-gray-700"
-              style={{ minHeight: '400px' }}
+              style={{ 
+                minHeight: '300px',
+                maxHeight: '300px',
+                width: `${100 / itemsPerPage}%`
+              }}
             >
               <div className="flex flex-col h-full items-center text-center">
-                <div className="w-20 h-20 md:w-24 md:h-24 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
-                  <User size={32} className="text-primary" />
+                <div className="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
+                  <User size={24} className="text-primary" />
                 </div>
                 <div className="flex-1 flex flex-col items-center w-full">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                     {member.name}
                   </h3>
-                  <p className="text-primary font-medium mb-2">
+                  <p className="text-primary font-medium mb-2 text-sm">
                     {member.role}
                   </p>
                   {member.expertise && (
@@ -162,7 +166,7 @@ function TeamCarousel({ members }: { members: typeof staffMembers }) {
                     </p>
                   )}
                   {member.education && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2">
                       {member.education}
                     </p>
                   )}

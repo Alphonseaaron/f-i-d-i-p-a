@@ -113,10 +113,10 @@ export default function About() {
           className="mt-16 grid md:grid-cols-4 gap-8 text-center"
         >
           {[
-            { number: "16+", label: "Years Experience" },
-            { number: "50+", label: "Projects Completed" },
-            { number: "100K+", label: "Lives Impacted" },
-            { number: "25+", label: "Community Partners" }
+            { number: "18+", label: "Years Experience" },
+            { number: "100+", label: "Projects Completed" },
+            { number: "200K+", label: "Lives Impacted" },
+            { number: "50+", label: "Community Partners" }
           ].map((stat, index) => (
             <motion.div
               key={stat.label}

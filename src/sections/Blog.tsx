@@ -6,30 +6,30 @@ const blogPosts = [
   {
     title: "Empowering Communities Through Sustainable Development",
     content: "Exploring how sustainable development practices are transforming rural communities and creating lasting positive change...",
-    author: "Sarah Johnson",
+    author: "Jayne Wasonga",
     date: "2024-02-15",
-    imageUrl: "/image/DSC05379.JPG"
+    imageUrl: "/src/assets/images/DSC05379.JPG"
   },
   {
     title: "The Impact of Gender Equality Programs",
     description: "Examining the transformative effects of our gender equality initiatives on communities and individual lives...",
-    author: "Michael Chen",
+    author: "Jayne Wasonga",
     date: "2024-02-10",
-    imageUrl: "/image/SAM_0790.JPG"
+    imageUrl: "/src/assets/images/SAM_0790.JPG"
   },
   {
     title: "Innovation in Rural Healthcare Delivery",
     content: "Discovering new approaches to delivering healthcare services in remote and underserved areas...",
-    author: "Dr. Emily Roberts",
+    author: "Jayne Wasonga",
     date: "2024-02-05",
-    imageUrl: "/image/IMG_20141007_172002.jpg"
+    imageUrl: "/src/assets/images/IMG_20141007_172002.jpg"
   }
 ];
 
 export default function BlogSection() {
   return (
     <section id="blog" className="py-20 relative bg-light dark:bg-dark">
-      <div className="absolute inset-0 bg-[url('/images/DSC01363.JPG')] bg-fixed bg-cover bg-center opacity-50 dark:opacity-40" />
+      <div className="absolute inset-0 bg-[url('/src/assets/images/DSC01363.JPG')] bg-fixed bg-cover bg-center opacity-50 dark:opacity-40" />
       <div className="absolute inset-0 bg-white/80 dark:bg-dark/60 backdrop-blur-[2px]" />
       
       <div className="max-w-7xl mx-auto px-4 relative z-10">

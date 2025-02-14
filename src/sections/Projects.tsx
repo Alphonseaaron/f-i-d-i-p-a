@@ -6,19 +6,19 @@ const projects = [
   {
     title: "Community Training Initiative",
     description: "Implementing comprehensive training programs and workshops to build capacity within communities.",
-    imageUrl: "/image/DSC01363.JPG",
+    imageUrl: "/src/assets/images/DSC01363.JPG",
     status: "Ongoing"
   },
   {
     title: "Youth Development Program",
     description: "Supporting youth through education and outdoor activities to build life skills and community engagement.",
-    imageUrl: "/image/SAM_0721.JPG",
+    imageUrl: "/src/assets/images/SAM_0721.JPG",
     status: "Ongoing"
   },
   {
     title: "School Infrastructure Support",
     description: "Improving school facilities and infrastructure to enhance the learning environment for students.",
-    imageUrl: "/image/SAM_0724.JPG",
+    imageUrl: "/src/assets/images/SAM_0724.JPG",
     status: "Ongoing"
   }
 ];
