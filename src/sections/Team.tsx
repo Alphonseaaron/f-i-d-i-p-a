@@ -134,25 +134,25 @@ function TeamCarousel({ members }: { members: typeof staffMembers }) {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -100 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="flex-1 min-w-[280px] max-w-[350px] h-[400px] bg-white dark:bg-dark-lighter rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow"
+              className="flex-1 min-w-[280px] max-w-[350px] bg-white dark:bg-dark-lighter rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow"
             >
-              <div className="w-24 h-24 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
-                <User size={40} className="text-primary" />
-              </div>
-              <div className="h-[calc(100%-136px)] flex flex-col">
-                <h3 className="text-lg font-semibold text-center mb-2 text-gray-900 dark:text-white">
+              <div className="flex flex-col space-y-4">
+                <div className="w-24 h-24 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
+                  <User size={40} className="text-primary" />
+                </div>
+                <h3 className="text-lg font-semibold text-center text-gray-900 dark:text-white">
                   {member.name}
                 </h3>
-                <p className="text-primary text-center font-medium mb-2">
+                <p className="text-primary text-center font-medium">
                   {member.role}
                 </p>
                 {member.expertise && (
-                  <p className="text-sm text-gray-600 dark:text-gray-300 text-center mb-2">
+                  <p className="text-sm text-gray-600 dark:text-gray-300 text-center">
                     {member.expertise}
                   </p>
                 )}
                 {member.education && (
-                  <p className="text-sm text-gray-500 dark:text-gray-400 text-center mt-auto">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
                     {member.education}
                   </p>
                 )}

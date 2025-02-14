@@ -22,6 +22,11 @@ const slides = [
     text: "Human Rights Based Approach",
     subtext: "Empowering women and girls to claim their rights",
     image: "/images/students-tools.jpg"
+  },
+  {
+    text: "Supporting Education and Infrastructure",
+    subtext: "Building better facilities and resources for our communities",
+    image: "/images/students-carrying-water.jpg"
   }
 ];
 
@@ -55,11 +60,13 @@ export default function Home() {
               initial={{ scale: 1.1 }}
               animate={{ scale: currentSlide === index ? 1 : 1.1 }}
               transition={{ duration: 5 }}
-              className="absolute inset-0 bg-cover bg-center"
-              style={{
-                backgroundImage: `url(${slide.image})`,
-              }}
+              className="absolute inset-0"
             >
+              <img 
+                src={slide.image} 
+                alt={slide.text}
+                className="w-full h-full object-cover"
+              />
               <div className="absolute inset-0 bg-gradient-to-b from-black/70 to-black/40" />
             </motion.div>
           </motion.div>
