@@ -6,16 +6,24 @@ import BackButton from '../components/BackButton';
 export default function BlogPost() {
   const { slug } = useParams();
 
-  // In a real app, fetch the blog post data using the slug
+  // Match the blog post data with the listing page
   const post = {
     title: "Empowering Communities Through Sustainable Development",
-    content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+    content: `Exploring how sustainable development practices are transforming rural communities and creating lasting positive change.
 
-    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`,
+    Our sustainable development initiatives focus on building resilient communities through participatory approaches and local empowerment strategies. By working directly with community members, we ensure that development projects are both sustainable and aligned with local needs and capabilities.
+
+    Through our integrated approach, we've seen remarkable transformations in various communities:
+    
+    • Improved agricultural practices leading to better food security
+    • Enhanced economic opportunities through skills development
+    • Strengthened community institutions and leadership
+    • Better environmental conservation practices
+    
+    The success of these initiatives demonstrates the power of community-led development in creating lasting positive change.`,
     author: "Sarah Johnson",
-    authorPhoto: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150",
     date: "2024-02-15",
-    imageUrl: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=1600"
+    imageUrl: "/images/DSC05379.JPG"
   };
 
   return (
@@ -39,18 +47,11 @@ export default function BlogPost() {
             <h1 className="text-4xl font-bold">{post.title}</h1>
             
             <div className="flex items-center space-x-4">
-              <div className="flex items-center">
-                <img
-                  src={post.authorPhoto}
-                  alt={post.author}
-                  className="w-12 h-12 rounded-full mr-3 object-cover"
-                />
-                <div>
-                  <p className="font-medium">{post.author}</p>
-                  <p className="text-sm text-gray-400">
-                    {new Date(post.date).toLocaleDateString()}
-                  </p>
-                </div>
+              <div>
+                <p className="font-medium">{post.author}</p>
+                <p className="text-sm text-gray-400">
+                  {new Date(post.date).toLocaleDateString()}
+                </p>
               </div>
             </div>
 

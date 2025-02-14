@@ -8,28 +8,28 @@ const blogPosts = [
     content: "Exploring how sustainable development practices are transforming rural communities and creating lasting positive change...",
     author: "Sarah Johnson",
     date: "2024-02-15",
-    imageUrl: "/images/community-gathering.jpg"
+    imageUrl: "/images/DSC05379.JPG"
   },
   {
     title: "The Impact of Gender Equality Programs",
     description: "Examining the transformative effects of our gender equality initiatives on communities and individual lives...",
     author: "Michael Chen",
     date: "2024-02-10",
-    imageUrl: "/images/students-path.jpg"
+    imageUrl: "/images/SAM_0790.JPG"
   },
   {
     title: "Innovation in Rural Healthcare Delivery",
     content: "Discovering new approaches to delivering healthcare services in remote and underserved areas...",
     author: "Dr. Emily Roberts",
     date: "2024-02-05",
-    imageUrl: "/images/school-kitchen.jpg"
+    imageUrl: "/images/IMG_20141007_172002.jpg"
   }
 ];
 
 export default function BlogSection() {
   return (
     <section id="blog" className="py-20 relative bg-light dark:bg-dark">
-      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&q=80&w=1600')] bg-fixed bg-cover bg-center opacity-50 dark:opacity-40" />
+      <div className="absolute inset-0 bg-[url('/images/DSC01363.JPG')] bg-fixed bg-cover bg-center opacity-50 dark:opacity-40" />
       <div className="absolute inset-0 bg-white/80 dark:bg-dark/60 backdrop-blur-[2px]" />
       
       <div className="max-w-7xl mx-auto px-4 relative z-10">
@@ -77,7 +77,7 @@ export default function BlogSection() {
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">{post.content}</p>
                 <div className="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
-                  <span>By {post.author}</span>
+                  <span>{post.author}</span>
                   <span>{new Date(post.date).toLocaleDateString()}</span>
                 </div>
                 <Link 

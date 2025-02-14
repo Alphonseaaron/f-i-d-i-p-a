@@ -1,33 +1,29 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import BackButton from '../components/BackButton';
 
-// Use the same blog posts as the homepage
 const blogPosts = [
   {
     title: "Empowering Communities Through Sustainable Development",
     content: "Exploring how sustainable development practices are transforming rural communities and creating lasting positive change...",
     author: "Sarah Johnson",
-    authorPhoto: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150",
     date: "2024-02-15",
-    imageUrl: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=1600"
+    imageUrl: "/images/DSC05379.JPG"
   },
   {
     title: "The Impact of Gender Equality Programs",
     content: "Examining the transformative effects of our gender equality initiatives on communities and individual lives...",
     author: "Michael Chen",
-    authorPhoto: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=150",
     date: "2024-02-10",
-    imageUrl: "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?auto=format&fit=crop&q=80&w=1600"
+    imageUrl: "/images/SAM_0790.JPG"
   },
   {
     title: "Innovation in Rural Healthcare Delivery",
     content: "Discovering new approaches to delivering healthcare services in remote and underserved areas...",
     author: "Dr. Emily Roberts",
-    authorPhoto: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=150",
     date: "2024-02-05",
-    imageUrl: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=1600"
+    imageUrl: "/images/IMG_20141007_172002.jpg"
   }
 ];
 
@@ -65,11 +61,6 @@ export default function Blog() {
                 <p className="text-gray-300 mb-4">{post.content}</p>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
-                    <img
-                      src={post.authorPhoto}
-                      alt={post.author}
-                      className="w-10 h-10 rounded-full mr-3 object-cover"
-                    />
                     <span className="text-gray-400">{post.author}</span>
                   </div>
                   <span className="text-sm text-gray-400">

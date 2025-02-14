@@ -6,27 +6,30 @@ import BackButton from '../components/BackButton';
 export default function ProgramDetail() {
   const { slug } = useParams();
 
-  // In a real app, fetch the program data using the slug
+  // Match the program data with the listing page
   const program = {
-    title: "Peace, Gender Mainstream & Governance Advocacy",
-    description: `Our Peace, Gender Mainstream & Governance Advocacy program is dedicated to promoting sustainable peace, gender equality, and good governance through community-based initiatives and advocacy programs.
+    title: "Gender Equality and Social Inclusion",
+    description: "Empowering communities to address gender inequality and social inclusion through training community paralegals, youth, and women as community resource persons.",
+    image: "/images/DSC05379.JPG",
+    content: `Our Gender Equality and Social Inclusion program is dedicated to promoting equal opportunities and social justice through comprehensive community-based initiatives.
 
     Through this program, we work closely with local communities to:
-    • Promote peaceful conflict resolution
-    • Advocate for gender equality and women's rights
-    • Support good governance initiatives
-    • Build capacity for community leadership`,
-    image: "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?auto=format&fit=crop&q=80&w=1600",
+    • Train community paralegals to provide legal support
+    • Empower youth and women as community resource persons
+    • Address systemic barriers to inclusion
+    • Promote gender-responsive development
+
+    Our approach focuses on sustainable, community-led solutions that create lasting positive change.`,
     objectives: [
-      "Strengthen community peace-building mechanisms",
-      "Promote gender equality and women's empowerment",
-      "Enhance governance and accountability",
-      "Build community resilience"
+      "Train and support community paralegals",
+      "Empower women and youth as leaders",
+      "Promote inclusive development",
+      "Address gender-based discrimination"
     ],
     impact: {
-      beneficiaries: "10,000+",
-      communities: "25",
-      successRate: "85%"
+      beneficiaries: "5,000+",
+      communities: "20",
+      successRate: "90%"
     }
   };
 
@@ -51,7 +54,7 @@ export default function ProgramDetail() {
             <h1 className="text-4xl font-bold">{program.title}</h1>
             
             <div className="prose prose-invert max-w-none">
-              {program.description.split('\n\n').map((paragraph, index) => (
+              {program.content.split('\n\n').map((paragraph, index) => (
                 <p key={index} className="mb-4 text-gray-300 leading-relaxed">
                   {paragraph}
                 </p>

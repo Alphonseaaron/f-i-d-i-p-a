@@ -6,11 +6,11 @@ import BackButton from '../components/BackButton';
 export default function ProjectDetail() {
   const { slug } = useParams();
 
-  // In a real app, fetch the project data using the slug
+  // Match the project data with the listing page
   const project = {
     title: "Community Training Initiative",
-    description: `Our Community Training Initiative is focused on implementing comprehensive training programs and workshops to build capacity within communities, with a special emphasis on sustainable development and community leadership.`,
-    imageUrl: "/images/community-gathering.jpg",
+    description: "Implementing comprehensive training programs and workshops to build capacity within communities.",
+    imageUrl: "/images/DSC01363.JPG",
     status: "Ongoing",
     timeline: {
       start: "January 2024",
