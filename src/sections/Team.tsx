@@ -1,50 +1,44 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { ChevronLeft, ChevronRight, User } from 'lucide-react';
 
 const staffMembers = [
   {
     name: "Ms Jayne A. I. Wasonga",
     role: "Board Secretary and Chief Executive Officer",
     expertise: "Gender and Project Management Expert",
-    education: "M.A Planning and Management – Catholic University of Eastern Africa 2016 and Candidate MA Theology Christian Leadership Great Lakes University of Kisumu",
-    image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400"
+    education: "M.A Planning and Management – Catholic University of Eastern Africa 2016 and Candidate MA Theology Christian Leadership Great Lakes University of Kisumu"
   },
   {
     name: "Ms Jesca Mitaya",
     role: "Finance and Administration FAM Manager",
     expertise: "Finance and Economic Expert",
-    education: "BA Economics University of Nairobi- 2005",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400"
+    education: "BA Economics University of Nairobi- 2005"
   },
   {
     name: "Ms Linda Otieno",
     role: "Project Lead (Volunteer)",
     expertise: "Youth and Women Environment and Smallholders Farmers project",
-    education: "BA Relations and Diplomacy Maseno University 2019 and Candidate for Public Policy and Administration Kenyatta University",
-    image: "https://images.unsplash.com/photo-1573497019236-17f8177b81e8?auto=format&fit=crop&q=80&w=400"
+    education: "BA Relations and Diplomacy Maseno University 2019 and Candidate for Public Policy and Administration Kenyatta University"
   },
   {
     name: "Rev. Walter Ang'ienda",
     role: "Program Officer Peace Project (Volunteer)",
-    education: "Karen Christian College 2000",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400"
+    education: "Karen Christian College 2000"
   },
   {
     name: "Phillip Noel",
     role: "Volunteer, Soft Skills (Water and Sanitation)",
-    education: "Water Resource Management - University of Eldoret",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400"
+    education: "Water Resource Management - University of Eldoret"
   },
   {
     name: "Jackson Lesian",
-    role: "Office Assistant/Driver",
-    image: "https://images.unsplash.com/photo-1463453091185-61582044d556?auto=format&fit=crop&q=80&w=400"
+    role: "Office Assistant/Driver"
   },
   {
     name: "Jamima Mtuli",
     role: "Administer/Programs Assistant",
-    education: "Medical Training School Siaya 2019 Health Records",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400"
+    education: "Medical Training School Siaya 2019 Health Records"
   }
 ];
 
@@ -52,56 +46,135 @@ const boardMembers = [
   {
     name: "Mrs Rosemary Meyo",
     role: "Chairperson",
-    education: "MA Administration, Maseno University 2012",
-    image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400"
+    education: "MA Administration, Maseno University 2012"
   },
   {
     name: "Dr. Josephine Munthali",
     role: "Vice Chairperson",
     expertise: "Gender and Education",
-    education: "University of Edinburgh UK 2001",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400"
+    education: "University of Edinburgh UK 2001"
   },
   {
     name: "Ms Jayne A. Wasonga",
     role: "Chief Executive Officer and Board Secretary",
-    education: "M.A Project Planning and Management – The Catholic University of Eastern Africa (CUEA) 2016",
-    image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=400"
+    education: "M.A Project Planning and Management – The Catholic University of Eastern Africa (CUEA) 2016"
   },
   {
     name: "Sr. Mildred Mayeye",
     role: "Treasurer",
-    education: "Lwak Training School",
-    image: "https://images.unsplash.com/photo-1573497019236-17f8177b81e8?auto=format&fit=crop&q=80&w=400"
+    education: "Lwak Training School"
   },
   {
     name: "Dr. Rev. Simon Oriedo",
     role: "Member",
-    education: "African International University (2018)",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400"
+    education: "African International University (2018)"
   },
   {
     name: "Mr. Samwel Otieno",
     role: "Committee Member",
-    education: "B. Com University of Nairobi",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400"
+    education: "B. Com University of Nairobi"
   },
   {
     name: "Prof. Esther Mombo",
     role: "Committee Member",
     expertise: "Gender and Theology",
-    education: "Lecturer at St. Paul University Limuru and part-time Yale University",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400"
+    education: "Lecturer at St. Paul University Limuru and part-time Yale University"
   }
 ];
 
+function TeamCarousel({ members }: { members: typeof staffMembers }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const itemsPerPage = 3;
+
+  const nextSlide = () => {
+    if (!isAnimating) {
+      setIsAnimating(true);
+      setCurrentIndex((prev) => 
+        prev + itemsPerPage >= members.length ? 0 : prev + itemsPerPage
+      );
+    }
+  };
+
+  const prevSlide = () => {
+    if (!isAnimating) {
+      setIsAnimating(true);
+      setCurrentIndex((prev) => 
+        prev - itemsPerPage < 0 ? Math.max(0, members.length - itemsPerPage) : prev - itemsPerPage
+      );
+    }
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsAnimating(false);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [currentIndex]);
+
+  const visibleMembers = members.slice(currentIndex, currentIndex + itemsPerPage);
+
+  return (
+    <div className="relative">
+      <div className="flex justify-between items-center">
+        <button
+          onClick={prevSlide}
+          className="absolute left-0 z-10 -translate-x-1/2 bg-white dark:bg-dark-lighter p-2 rounded-full shadow-lg hover:scale-110 transition-transform"
+          disabled={isAnimating}
+        >
+          <ChevronLeft className="w-6 h-6 text-primary" />
+        </button>
+
+        <div className="flex gap-6 overflow-hidden px-12">
+          {visibleMembers.map((member, index) => (
+            <motion.div
+              key={member.name}
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -100 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="flex-1 bg-white dark:bg-dark-lighter rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow"
+            >
+              <div className="w-24 h-24 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
+                <User size={40} className="text-primary" />
+              </div>
+              <h3 className="text-lg font-semibold text-center mb-2 text-gray-900 dark:text-white">
+                {member.name}
+              </h3>
+              <p className="text-primary text-center font-medium mb-2">
+                {member.role}
+              </p>
+              {member.expertise && (
+                <p className="text-sm text-gray-600 dark:text-gray-300 text-center mb-2">
+                  {member.expertise}
+                </p>
+              )}
+              {member.education && (
+                <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
+                  {member.education}
+                </p>
+              )}
+            </motion.div>
+          ))}
+        </div>
+
+        <button
+          onClick={nextSlide}
+          className="absolute right-0 z-10 translate-x-1/2 bg-white dark:bg-dark-lighter p-2 rounded-full shadow-lg hover:scale-110 transition-transform"
+          disabled={isAnimating}
+        >
+          <ChevronRight className="w-6 h-6 text-primary" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function Team() {
   return (
-    <section id="team" className="py-20 relative bg-light dark:bg-dark">
-      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&q=80&w=1600')] bg-fixed bg-cover bg-center opacity-5 dark:opacity-10" />
-      <div className="absolute inset-0 bg-white/80 dark:bg-dark/60 backdrop-blur-[2px]" />
-      
-      <div className="max-w-7xl mx-auto px-4 relative z-10">
+    <section id="team" className="py-20 bg-light dark:bg-dark">
+      <div className="max-w-7xl mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -114,83 +187,15 @@ export default function Team() {
           </p>
         </motion.div>
 
-        <div className="mb-20">
-          <h3 className="text-2xl font-bold mb-8 text-gray-900 dark:text-white">Key Staff Members</h3>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {staffMembers.map((member, index) => (
-              <motion.div
-                key={member.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-white dark:bg-dark-lighter rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow group"
-              >
-                <div className="aspect-w-4 aspect-h-3">
-                  <img
-                    src={member.image}
-                    alt={member.name}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <div className="p-6">
-                  <h4 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
-                    {member.name}
-                  </h4>
-                  <p className="text-primary font-medium mb-2">{member.role}</p>
-                  {member.expertise && (
-                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
-                      {member.expertise}
-                    </p>
-                  )}
-                  {member.education && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      {member.education}
-                    </p>
-                  )}
-                </div>
-              </motion.div>
-            ))}
+        <div className="space-y-16">
+          <div>
+            <h3 className="text-2xl font-bold mb-8 text-gray-900 dark:text-white">Staff Members</h3>
+            <TeamCarousel members={staffMembers} />
           </div>
-        </div>
 
-        <div>
-          <h3 className="text-2xl font-bold mb-8 text-gray-900 dark:text-white">Board of Advisory</h3>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {boardMembers.map((member, index) => (
-              <motion.div
-                key={member.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-white dark:bg-dark-lighter rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow group"
-              >
-                <div className="aspect-w-4 aspect-h-3">
-                  <img
-                    src={member.image}
-                    alt={member.name}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <div className="p-6">
-                  <h4 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
-                    {member.name}
-                  </h4>
-                  <p className="text-primary font-medium mb-2">{member.role}</p>
-                  {member.expertise && (
-                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
-                      {member.expertise}
-                    </p>
-                  )}
-                  {member.education && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      {member.education}
-                    </p>
-                  )}
-                </div>
-              </motion.div>
-            ))}
+          <div>
+            <h3 className="text-2xl font-bold mb-8 text-gray-900 dark:text-white">Board of Advisory</h3>
+            <TeamCarousel members={boardMembers} />
           </div>
         </div>
       </div>

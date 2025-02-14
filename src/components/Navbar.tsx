@@ -13,6 +13,7 @@ export default function Navbar() {
     { title: 'About', id: 'about' },
     { title: 'Programs', id: 'programs' },
     { title: 'Projects', id: 'projects' },
+    { title: 'Team', id: 'team' },
     { title: 'Blog', id: 'blog' },
     { title: 'Contact', id: 'contact' },
   ];
