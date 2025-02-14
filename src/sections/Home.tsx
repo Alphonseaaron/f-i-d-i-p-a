@@ -4,23 +4,23 @@ import { ChevronDown } from 'lucide-react';
 
 const slides = [
   {
-    text: "Friendly Integrated Development Initiative in Poverty Alleviation",
-    subtext: "Empowering communities through sustainable development",
+    text: "Friendly Integrated Development Initiative in Poverty Alleviation (FIDIPA)",
+    subtext: "A holistic peaceful and democratic society with justice for all",
     image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=1600"
   },
   {
-    text: "Our project objective is to increase the capacity of rural and urban affected areas.",
-    subtext: "Building stronger, more resilient communities",
+    text: "Empowering Communities Since 2007",
+    subtext: "Registered under the NGO Act of Kenya as a National NGO",
     image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=1600"
   },
   {
-    text: "We implement grassroots programs and provide consultancy services.",
-    subtext: "Creating lasting positive change",
+    text: "Fostering Unity and Effective Participation",
+    subtext: "Working with urban and rural communities for sustainable development",
     image: "https://images.unsplash.com/photo-1509099836639-18ba1795216d?auto=format&fit=crop&q=80&w=1600"
   },
   {
-    text: "We believe in promoting peace and gender equality.",
-    subtext: "Working towards a more equitable future",
+    text: "Human Rights Based Approach",
+    subtext: "Empowering women and girls to claim their rights",
     image: "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=1600"
   }
 ];

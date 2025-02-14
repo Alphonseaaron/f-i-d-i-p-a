@@ -1,16 +1,16 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, Globe, PenTool } from 'lucide-react';
+import { Mail, Phone, MapPin, Globe, PenTool, Building2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function Contact() {
-  const handleEmailClick = () => {
-    window.location.href = 'mailto:info@fidipa.org';
+  const handleEmailClick = (email: string) => {
+    window.location.href = `mailto:${email}`;
   };
 
-  const handlePhoneClick = () => {
+  const handlePhoneClick = (phone: string) => {
     if ('tel' in window.navigator) {
-      window.location.href = 'tel:+254788377557';
+      window.location.href = `tel:${phone}`;
     }
   };
 
@@ -34,7 +34,7 @@ export default function Contact() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="grid md:grid-cols-2 gap-8"
+          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
           <motion.div
             whileHover={{ y: -8 }}
@@ -43,13 +43,25 @@ export default function Contact() {
             <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1577563908411-5077b6dc7624?auto=format&fit=crop&q=80&w=1600')] bg-cover bg-center opacity-5 dark:opacity-10 group-hover:opacity-10 dark:group-hover:opacity-20 transition-opacity duration-300" />
             <div className="relative z-10">
               <MapPin className="w-8 h-8 text-primary mb-4" />
-              <h3 className="font-semibold text-lg mb-2 text-gray-900 dark:text-white">Address</h3>
-              <p className="text-gray-600 dark:text-gray-300">Kayole Spine Road Line D2-303</p>
+              <h3 className="font-semibold text-lg mb-2 text-gray-900 dark:text-white">Main Office</h3>
+              <p className="text-gray-600 dark:text-gray-300">Kisumu Obambo next to St. John Anglican Church Obambo</p>
+            </div>
+          </motion.div>
+
+          <motion.div
+            whileHover={{ y: -8 }}
+            className="bg-white dark:bg-dark p-6 rounded-lg shadow-lg dark:shadow-none relative overflow-hidden group hover:shadow-xl dark:hover:bg-dark-accent transition-all duration-300"
+          >
+            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1577563908411-5077b6dc7624?auto=format&fit=crop&q=80&w=1600')] bg-cover bg-center opacity-5 dark:opacity-10 group-hover:opacity-10 dark:group-hover:opacity-20 transition-opacity duration-300" />
+            <div className="relative z-10">
+              <Building2 className="w-8 h-8 text-primary mb-4" />
+              <h3 className="font-semibold text-lg mb-2 text-gray-900 dark:text-white">Liaison Office</h3>
+              <p className="text-gray-600 dark:text-gray-300">Kayole Spine Road D2 Hse 383 Nairobi</p>
             </div>
           </motion.div>
 
           <motion.button
-            onClick={handlePhoneClick}
+            onClick={() => handlePhoneClick('+254722782869')}
             whileHover={{ y: -8 }}
             className="bg-white dark:bg-dark p-6 rounded-lg shadow-lg dark:shadow-none text-left hover:shadow-xl dark:hover:bg-dark-accent transition-all duration-300 relative overflow-hidden group w-full"
           >
@@ -57,36 +69,62 @@ export default function Contact() {
             <div className="relative z-10">
               <Phone className="w-8 h-8 text-primary mb-4" />
               <h3 className="font-semibold text-lg mb-2 text-gray-900 dark:text-white">Phone</h3>
-              <p className="text-gray-600 dark:text-gray-300">+254 788 377 557</p>
+              <p className="text-gray-600 dark:text-gray-300">+254 722 782 869</p>
             </div>
           </motion.button>
 
-          <motion.button
-            onClick={handleEmailClick}
-            whileHover={{ y: -8 }}
-            className="bg-white dark:bg-dark p-6 rounded-lg shadow-lg dark:shadow-none text-left hover:shadow-xl dark:hover:bg-dark-accent transition-all duration-300 relative overflow-hidden group w-full"
+          <motion.div
+            className="bg-white dark:bg-dark p-6 rounded-lg shadow-lg dark:shadow-none text-left hover:shadow-xl dark:hover:bg-dark-accent transition-all duration-300 relative overflow-hidden group"
           >
             <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1596526131083-e8c633c948d2?auto=format&fit=crop&q=80&w=1600')] bg-cover bg-center opacity-5 dark:opacity-10 group-hover:opacity-10 dark:group-hover:opacity-20 transition-opacity duration-300" />
             <div className="relative z-10">
               <Mail className="w-8 h-8 text-primary mb-4" />
               <h3 className="font-semibold text-lg mb-2 text-gray-900 dark:text-white">Email</h3>
-              <p className="text-gray-600 dark:text-gray-300">info@fidipa.org</p>
-              <p className="text-gray-600 dark:text-gray-300">fidipakenya@gmail.com</p>
+              <button 
+                onClick={() => handleEmailClick('fidipakenya@gmail.com')}
+                className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors block"
+              >
+                fidipakenya@gmail.com
+              </button>
+              <button
+                onClick={() => handleEmailClick('nyapaulj@gmail.com')}
+                className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors block"
+              >
+                nyapaulj@gmail.com
+              </button>
             </div>
-          </motion.button>
+          </motion.div>
 
-          <motion.button
-            onClick={handleWebsiteClick}
+          <motion.div
             whileHover={{ y: -8 }}
-            className="bg-white dark:bg-dark p-6 rounded-lg shadow-lg dark:shadow-none text-left hover:shadow-xl dark:hover:bg-dark-accent transition-all duration-300 relative overflow-hidden group w-full"
+            className="bg-white dark:bg-dark p-6 rounded-lg shadow-lg dark:shadow-none text-left hover:shadow-xl dark:hover:bg-dark-accent transition-all duration-300 relative overflow-hidden group"
           >
             <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1487014679447-9f8336841d58?auto=format&fit=crop&q=80&w=1600')] bg-cover bg-center opacity-5 dark:opacity-10 group-hover:opacity-10 dark:group-hover:opacity-20 transition-opacity duration-300" />
             <div className="relative z-10">
               <Globe className="w-8 h-8 text-primary mb-4" />
-              <h3 className="font-semibold text-lg mb-2 text-gray-900 dark:text-white">Website</h3>
+              <h3 className="font-semibold text-lg mb-2 text-gray-900 dark:text-white">Website & Address</h3>
               <p className="text-gray-600 dark:text-gray-300">www.fidipa.org</p>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">P.O. Box 62226, Code 00200 Nairobi</p>
             </div>
-          </motion.button>
+          </motion.div>
+
+          <motion.div
+            whileHover={{ y: -8 }}
+            className="bg-white dark:bg-dark p-6 rounded-lg shadow-lg dark:shadow-none text-left hover:shadow-xl dark:hover:bg-dark-accent transition-all duration-300 relative overflow-hidden group"
+          >
+            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1601597111158-2fceff292cdc?auto=format&fit=crop&q=80&w=1600')] bg-cover bg-center opacity-5 dark:opacity-10 group-hover:opacity-10 dark:group-hover:opacity-20 transition-opacity duration-300" />
+            <div className="relative z-10">
+              <Building2 className="w-8 h-8 text-primary mb-4" />
+              <h3 className="font-semibold text-lg mb-2 text-gray-900 dark:text-white">Bank Details</h3>
+              <div className="text-gray-600 dark:text-gray-300">
+                <p>Bank Name: ABSA Kenya, Kisumu branch</p>
+                <p>Account number: 2021887687</p>
+                <p>Account name: FIDIPA</p>
+                <p>Bank Code: 009</p>
+                <p>Swift Code: BARCKENX</p>
+              </div>
+            </div>
+          </motion.div>
         </motion.div>
 
         <motion.div
