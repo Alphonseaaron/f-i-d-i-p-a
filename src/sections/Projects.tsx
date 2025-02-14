@@ -4,21 +4,21 @@ import { Link } from 'react-router-dom';
 
 const projects = [
   {
-    title: "Community Health Initiative",
-    description: "Implementing comprehensive healthcare programs in rural communities, focusing on preventive care and health education.",
-    imageUrl: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=1600",
+    title: "Community Training Initiative",
+    description: "Implementing comprehensive training programs and workshops to build capacity within communities.",
+    imageUrl: "/images/community-gathering.jpg",
     status: "Ongoing"
   },
   {
-    title: "Women Empowerment Program",
-    description: "Supporting women through skills training, microfinance initiatives, and business development workshops.",
-    imageUrl: "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=1600",
-    status: "Completed"
+    title: "Youth Development Program",
+    description: "Supporting youth through education and outdoor activities to build life skills and community engagement.",
+    imageUrl: "/images/students-path.jpg",
+    status: "Ongoing"
   },
   {
-    title: "Youth Education Support",
-    description: "Providing educational resources and mentorship to underprivileged youth in urban areas.",
-    imageUrl: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=1600",
+    title: "School Infrastructure Support",
+    description: "Improving school facilities and infrastructure to enhance the learning environment for students.",
+    imageUrl: "/images/school-kitchen.jpg",
     status: "Ongoing"
   }
 ];

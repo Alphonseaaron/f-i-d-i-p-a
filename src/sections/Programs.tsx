@@ -4,26 +4,67 @@ import { Link } from 'react-router-dom';
 
 const programs = [
   {
-    title: "Peace, Gender Mainstream & Governance Advocacy",
-    description: "Promoting peace, gender equality, and good governance through community-based initiatives and advocacy programs.",
-    image: "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?auto=format&fit=crop&q=80&w=1600"
+    title: "Gender Equality and Social Inclusion",
+    description: "Empowering communities to address gender inequality and social inclusion through training community paralegals, youth, and women as community resource persons.",
+    image: "/images/community-gathering.jpg",
+    subPrograms: [
+      "Women with Disability (WWD)",
+      "Women in and out of prisons",
+      "Young Widows Support",
+      "Girls Education and Mentorship",
+      "Women in Leadership"
+    ]
   },
   {
-    title: "Environmental, Water & Sanitation",
-    description: "Implementing sustainable environmental practices and improving access to clean water and sanitation facilities.",
-    image: "https://images.unsplash.com/photo-1541675154750-0444c7d51e8e?auto=format&fit=crop&q=80&w=1600"
+    title: "Grandmothers and Orphans Support",
+    description: "Supporting grandmothers caring for orphans and vulnerable children (OVC) through health, nutrition, and economic empowerment initiatives.",
+    image: "/images/school-kitchen.jpg",
+    subPrograms: [
+      "Health Support",
+      "Nutrition Programs",
+      "Economic Empowerment",
+      "Education Support"
+    ]
   },
   {
-    title: "AIDS Orphans & Vulnerable Children",
-    description: "Supporting and empowering AIDS orphans and vulnerable children through education and healthcare initiatives.",
-    image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=1600"
+    title: "Environment and Food Security",
+    description: "Implementing sustainable farming methods and conservation agriculture to increase yields and promote drought-resistant crops.",
+    image: "/images/students-tools.jpg",
+    subPrograms: [
+      "Sustainable Land Management",
+      "Income Generation",
+      "Natural Resource Management",
+      "Climate Resilience"
+    ]
+  },
+  {
+    title: "Agriculture and Technology",
+    description: "Enhancing technology adoption and promoting youth technical entrepreneurship in agriculture and infrastructure development.",
+    image: "/images/students-path.jpg",
+    subPrograms: [
+      "Digital Agriculture",
+      "Smart Farming",
+      "Youth Empowerment",
+      "Technical Training"
+    ]
+  },
+  {
+    title: "Soft Skills Training",
+    description: "Supporting TVET and NITA graduates through business skills development, entrepreneurship training, and leadership development.",
+    image: "/images/students-carrying-water.jpg",
+    subPrograms: [
+      "Business Start-up Skills",
+      "Entrepreneurial Mindset",
+      "Creative Thinking",
+      "Visionary Leadership"
+    ]
   }
 ];
 
 export default function Programs() {
   return (
     <section id="programs" className="py-20 relative bg-light dark:bg-dark">
-      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1542810634-71277d95dcbb?auto=format&fit=crop&q=80&w=1600')] bg-fixed bg-cover bg-center opacity-10 dark:opacity-40" />
+      <div className="absolute inset-0 bg-[url('/images/community-gathering.jpg')] bg-fixed bg-cover bg-center opacity-10 dark:opacity-40" />
       <div className="absolute inset-0 bg-white/90 dark:bg-dark/60" />
       
       <div className="max-w-7xl mx-auto px-4 relative z-10">
@@ -48,7 +89,7 @@ export default function Programs() {
         </div>
         
         <div className="grid md:grid-cols-3 gap-8">
-          {programs.map((program, index) => (
+          {programs.slice(0, 3).map((program, index) => (
             <motion.div
               key={program.title}
               initial={{ opacity: 0, y: 20 }}
@@ -68,6 +109,17 @@ export default function Programs() {
               <div className="p-6">
                 <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">{program.title}</h3>
                 <p className="text-gray-600 dark:text-gray-300 mb-4">{program.description}</p>
+                <div className="mb-4">
+                  <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-400 mb-2">Key Components:</h4>
+                  <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                    {program.subPrograms.slice(0, 3).map((sub, idx) => (
+                      <li key={idx} className="flex items-center">
+                        <span className="w-1.5 h-1.5 bg-primary rounded-full mr-2"></span>
+                        {sub}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
                 <Link 
                   to={`/programs/${program.title.toLowerCase().replace(/\s+/g, '-')}`}
                   className="text-primary hover:text-primary/80 transition-colors flex items-center"

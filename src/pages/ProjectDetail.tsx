@@ -8,37 +8,37 @@ export default function ProjectDetail() {
 
   // In a real app, fetch the project data using the slug
   const project = {
-    title: "Community Health Initiative",
-    description: `Our Community Health Initiative is focused on implementing comprehensive healthcare programs in rural communities, with a special emphasis on preventive care and health education.
+    title: "Community Training Initiative",
+    description: `Our Community Training Initiative is focused on implementing comprehensive training programs and workshops to build capacity within communities, with a special emphasis on sustainable development and community leadership.
 
     This project aims to:
-    • Improve access to basic healthcare services
-    • Provide health education and awareness
-    • Train community health workers
-    • Establish sustainable health systems`,
-    imageUrl: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=1600",
+    • Enhance community leadership skills
+    • Promote sustainable development practices
+    • Build local capacity for project management
+    • Establish long-term community development frameworks`,
+    imageUrl: "/images/community-gathering.jpg",
     status: "Ongoing",
     timeline: {
       start: "January 2024",
       end: "December 2024"
     },
     objectives: [
-      "Improve healthcare accessibility in rural areas",
-      "Reduce preventable diseases through education",
-      "Build sustainable healthcare infrastructure",
-      "Train local healthcare providers"
+      "Develop community leadership skills",
+      "Promote sustainable practices",
+      "Build local project management capacity",
+      "Establish development frameworks"
     ],
     impact: {
-      beneficiaries: "5,000+",
-      communities: "10",
-      healthCenters: "5",
-      trainedWorkers: "50"
+      beneficiaries: "1,000+",
+      communities: "15",
+      workshops: "25",
+      trainedLeaders: "100"
     },
     achievements: [
-      "Established 5 community health centers",
-      "Trained 50 community health workers",
-      "Conducted 100+ health awareness sessions",
-      "Served 5000+ community members"
+      "Conducted 25 leadership workshops",
+      "Trained 100 community leaders",
+      "Implemented 15 community projects",
+      "Established 5 sustainable programs"
     ]
   };
 
@@ -114,15 +114,15 @@ export default function ProjectDetail() {
                 </div>
                 <div className="bg-dark-lighter p-6 rounded-lg text-center">
                   <div className="text-3xl font-bold text-primary mb-2">
-                    {project.impact.healthCenters}
+                    {project.impact.workshops}
                   </div>
-                  <div className="text-gray-300">Health Centers</div>
+                  <div className="text-gray-300">Workshops</div>
                 </div>
                 <div className="bg-dark-lighter p-6 rounded-lg text-center">
                   <div className="text-3xl font-bold text-primary mb-2">
-                    {project.impact.trainedWorkers}
+                    {project.impact.trainedLeaders}
                   </div>
-                  <div className="text-gray-300">Trained Workers</div>
+                  <div className="text-gray-300">Leaders Trained</div>
                 </div>
               </div>
             </div>
