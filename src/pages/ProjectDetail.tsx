@@ -37,7 +37,7 @@ export default function ProjectDetail() {
   };
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen bg-light dark:bg-dark">
       <BackButton />
       <div className="max-w-4xl mx-auto px-4 py-12">
         <motion.div
@@ -51,86 +51,86 @@ export default function ProjectDetail() {
               alt={project.title}
               className="w-full h-full object-cover"
             />
-            <div className="absolute top-4 right-4 bg-primary px-4 py-2 rounded-full text-sm font-medium">
+            <div className="absolute top-4 right-4 bg-primary px-4 py-2 rounded-full text-sm font-medium text-white">
               {project.status}
             </div>
           </div>
 
           <div className="space-y-8">
             <div>
-              <h1 className="text-4xl font-bold mb-4">{project.title}</h1>
-              <div className="flex space-x-4 text-gray-400">
+              <h1 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white">{project.title}</h1>
+              <div className="flex space-x-4 text-gray-600 dark:text-gray-400">
                 <span>Start: {project.timeline.start}</span>
                 <span>•</span>
                 <span>End: {project.timeline.end}</span>
               </div>
             </div>
             
-            <div className="prose prose-invert max-w-none">
-              <p className="mb-4 text-gray-300 leading-relaxed">
+            <div className="prose prose-gray dark:prose-invert max-w-none">
+              <p className="mb-4 text-gray-600 dark:text-gray-300 leading-relaxed">
                 {project.description}
               </p>
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold mb-4">Project Objectives</h2>
+              <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Project Objectives</h2>
               <div className="grid md:grid-cols-2 gap-4">
                 {project.objectives.map((objective, index) => (
                   <div 
                     key={index}
-                    className="bg-dark-lighter p-4 rounded-lg flex items-center space-x-3"
+                    className="bg-white dark:bg-dark-lighter p-4 rounded-lg flex items-center space-x-3 shadow-sm"
                   >
                     <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
                       <div className="w-3 h-3 bg-primary rounded-full" />
                     </div>
-                    <span className="text-gray-300">{objective}</span>
+                    <span className="text-gray-600 dark:text-gray-300">{objective}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold mb-4">Project Impact</h2>
+              <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Project Impact</h2>
               <div className="grid md:grid-cols-4 gap-4">
-                <div className="bg-dark-lighter p-6 rounded-lg text-center">
+                <div className="bg-white dark:bg-dark-lighter p-6 rounded-lg text-center shadow-sm">
                   <div className="text-3xl font-bold text-primary mb-2">
                     {project.impact.beneficiaries}
                   </div>
-                  <div className="text-gray-300">People Reached</div>
+                  <div className="text-gray-600 dark:text-gray-300">People Reached</div>
                 </div>
-                <div className="bg-dark-lighter p-6 rounded-lg text-center">
+                <div className="bg-white dark:bg-dark-lighter p-6 rounded-lg text-center shadow-sm">
                   <div className="text-3xl font-bold text-primary mb-2">
                     {project.impact.communities}
                   </div>
-                  <div className="text-gray-300">Communities</div>
+                  <div className="text-gray-600 dark:text-gray-300">Communities</div>
                 </div>
-                <div className="bg-dark-lighter p-6 rounded-lg text-center">
+                <div className="bg-white dark:bg-dark-lighter p-6 rounded-lg text-center shadow-sm">
                   <div className="text-3xl font-bold text-primary mb-2">
                     {project.impact.workshops}
                   </div>
-                  <div className="text-gray-300">Workshops</div>
+                  <div className="text-gray-600 dark:text-gray-300">Workshops</div>
                 </div>
-                <div className="bg-dark-lighter p-6 rounded-lg text-center">
+                <div className="bg-white dark:bg-dark-lighter p-6 rounded-lg text-center shadow-sm">
                   <div className="text-3xl font-bold text-primary mb-2">
                     {project.impact.trainedLeaders}
                   </div>
-                  <div className="text-gray-300">Leaders Trained</div>
+                  <div className="text-gray-600 dark:text-gray-300">Leaders Trained</div>
                 </div>
               </div>
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold mb-4">Key Achievements</h2>
+              <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Key Achievements</h2>
               <div className="grid md:grid-cols-2 gap-4">
                 {project.achievements.map((achievement, index) => (
                   <div 
                     key={index}
-                    className="bg-dark-lighter p-4 rounded-lg flex items-center space-x-3"
+                    className="bg-white dark:bg-dark-lighter p-4 rounded-lg flex items-center space-x-3 shadow-sm"
                   >
                     <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
                       <div className="w-3 h-3 bg-primary rounded-full" />
                     </div>
-                    <span className="text-gray-300">{achievement}</span>
+                    <span className="text-gray-600 dark:text-gray-300">{achievement}</span>
                   </div>
                 ))}
               </div>

@@ -6,7 +6,7 @@ const programs = [
   {
     title: "Gender Equality and Social Inclusion",
     description: "Empowering communities to address gender inequality and social inclusion through training community paralegals, youth, and women as community resource persons.",
-    image: "/images/community-gathering.jpg",
+    image: "/images/DSC05379.JPG",
     subPrograms: [
       {
         name: "Women with Disability (WWD)",
@@ -33,7 +33,7 @@ const programs = [
   {
     title: "Grandmothers and Orphans Support",
     description: "Supporting grandmothers caring for orphans and vulnerable children (OVC) through health, nutrition, and economic empowerment initiatives.",
-    image: "/images/school-kitchen.jpg",
+    image: "/images/SAM_1418.JPG",
     subPrograms: [
       {
         name: "Health Support",
@@ -56,7 +56,7 @@ const programs = [
   {
     title: "Environment and Food Security",
     description: "Implementing sustainable farming methods and conservation agriculture to increase yields and promote drought-resistant crops.",
-    image: "/images/students-tools.jpg",
+    image: "/images/kamulu dalawa 028.jpg",
     subPrograms: [
       {
         name: "Sustainable Land Management",
@@ -79,7 +79,7 @@ const programs = [
   {
     title: "Agriculture and Technology",
     description: "Enhancing technology adoption and promoting youth technical entrepreneurship in agriculture and infrastructure development.",
-    image: "/images/students-path.jpg",
+    image: "/images/SAM_0721.JPG",
     subPrograms: [
       {
         name: "Digital Agriculture",
@@ -102,7 +102,7 @@ const programs = [
   {
     title: "Soft Skills Training",
     description: "Supporting TVET and NITA graduates through business skills development, entrepreneurship training, and leadership development.",
-    image: "/images/students-carrying-water.jpg",
+    image: "/images/SAM_0724.JPG",
     subPrograms: [
       {
         name: "Business Start-up Skills",
@@ -126,13 +126,13 @@ const programs = [
 
 export default function Programs() {
   return (
-    <div className="pt-24 pb-16 min-h-screen bg-dark">
+    <div className="pt-24 pb-16 min-h-screen bg-light dark:bg-dark">
       <BackButton />
       <div className="max-w-7xl mx-auto px-4">
         <motion.h1 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-4xl font-bold mb-12 text-center"
+          className="text-4xl font-bold mb-12 text-center text-gray-900 dark:text-white"
         >
           Our Programs
         </motion.h1>
@@ -144,7 +144,7 @@ export default function Programs() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-dark-lighter rounded-lg overflow-hidden"
+              className="bg-white dark:bg-dark-lighter rounded-lg overflow-hidden shadow-lg dark:shadow-none"
             >
               <div className="md:flex">
                 <div className="md:w-1/3">
@@ -155,19 +155,19 @@ export default function Programs() {
                   />
                 </div>
                 <div className="p-6 md:w-2/3">
-                  <h2 className="text-2xl font-semibold mb-4">{program.title}</h2>
-                  <p className="text-gray-300 mb-6">{program.description}</p>
+                  <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">{program.title}</h2>
+                  <p className="text-gray-600 dark:text-gray-300 mb-6">{program.description}</p>
                   
                   <div className="grid md:grid-cols-2 gap-4">
                     {program.subPrograms.map((subProgram, idx) => (
                       <div 
                         key={idx}
-                        className="bg-dark p-4 rounded-lg"
+                        className="bg-light-darker dark:bg-dark p-4 rounded-lg"
                       >
                         <h3 className="text-lg font-semibold mb-2 text-primary">
                           {subProgram.name}
                         </h3>
-                        <p className="text-gray-400 text-sm">
+                        <p className="text-gray-600 dark:text-gray-400 text-sm">
                           {subProgram.description}
                         </p>
                       </div>
