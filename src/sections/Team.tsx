@@ -85,7 +85,23 @@ const boardMembers = [
 function TeamCarousel({ members }: { members: typeof staffMembers }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  const itemsPerPage = window.innerWidth >= 1024 ? 3 : window.innerWidth >= 768 ? 2 : 1;
+  const [itemsPerPage, setItemsPerPage] = useState(3);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) {
+        setItemsPerPage(1);
+      } else if (window.innerWidth < 1024) {
+        setItemsPerPage(2);
+      } else {
+        setItemsPerPage(3);
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const nextSlide = () => {
     if (!isAnimating) {
@@ -117,16 +133,8 @@ function TeamCarousel({ members }: { members: typeof staffMembers }) {
 
   return (
     <div className="relative">
-      <div className="flex justify-between items-center">
-        <button
-          onClick={prevSlide}
-          className="absolute left-0 z-10 -translate-x-1/2 bg-white dark:bg-dark-lighter p-2 rounded-full shadow-lg hover:scale-110 transition-transform"
-          disabled={isAnimating}
-        >
-          <ChevronLeft className="w-6 h-6 text-primary" />
-        </button>
-
-        <div className="flex gap-6 overflow-hidden px-12">
+      <div className="mx-12">
+        <div className="flex gap-6 overflow-hidden">
           {visibleMembers.map((member, index) => (
             <motion.div
               key={member.name}
@@ -134,41 +142,52 @@ function TeamCarousel({ members }: { members: typeof staffMembers }) {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -100 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="flex-1 min-w-[280px] max-w-[350px] bg-white dark:bg-dark-lighter rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow"
+              className="flex-1 min-w-0 bg-white dark:bg-dark-lighter rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow border border-gray-200 dark:border-gray-700"
+              style={{ minHeight: '400px' }}
             >
-              <div className="flex flex-col space-y-4">
-                <div className="w-24 h-24 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
-                  <User size={40} className="text-primary" />
+              <div className="flex flex-col h-full">
+                <div className="w-20 h-20 md:w-24 md:h-24 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
+                  <User size={32} className="text-primary" />
                 </div>
-                <h3 className="text-lg font-semibold text-center text-gray-900 dark:text-white">
-                  {member.name}
-                </h3>
-                <p className="text-primary text-center font-medium">
-                  {member.role}
-                </p>
-                {member.expertise && (
-                  <p className="text-sm text-gray-600 dark:text-gray-300 text-center">
-                    {member.expertise}
+                <div className="flex-1 flex flex-col items-center">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    {member.name}
+                  </h3>
+                  <p className="text-primary font-medium mb-2 text-center">
+                    {member.role}
                   </p>
-                )}
-                {member.education && (
-                  <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-                    {member.education}
-                  </p>
-                )}
+                  {member.expertise && (
+                    <p className="text-sm text-gray-600 dark:text-gray-300 text-center mb-2">
+                      {member.expertise}
+                    </p>
+                  )}
+                  {member.education && (
+                    <p className="text-sm text-gray-500 dark:text-gray-400 text-center mt-auto">
+                      {member.education}
+                    </p>
+                  )}
+                </div>
               </div>
             </motion.div>
           ))}
         </div>
-
-        <button
-          onClick={nextSlide}
-          className="absolute right-0 z-10 translate-x-1/2 bg-white dark:bg-dark-lighter p-2 rounded-full shadow-lg hover:scale-110 transition-transform"
-          disabled={isAnimating}
-        >
-          <ChevronRight className="w-6 h-6 text-primary" />
-        </button>
       </div>
+
+      <button
+        onClick={prevSlide}
+        className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-white dark:bg-dark-lighter p-2 rounded-full shadow-lg hover:scale-110 transition-transform border border-gray-200 dark:border-gray-700"
+        disabled={isAnimating}
+      >
+        <ChevronLeft className="w-6 h-6 text-primary" />
+      </button>
+
+      <button
+        onClick={nextSlide}
+        className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-white dark:bg-dark-lighter p-2 rounded-full shadow-lg hover:scale-110 transition-transform border border-gray-200 dark:border-gray-700"
+        disabled={isAnimating}
+      >
+        <ChevronRight className="w-6 h-6 text-primary" />
+      </button>
     </div>
   );
 }
