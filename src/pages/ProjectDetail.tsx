@@ -3,11 +3,8 @@ import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import BackButton from '../components/BackButton';
 
-export default function ProjectDetail() {
-  const { slug } = useParams();
-
-  // Match the project data with the listing page
-  const project = {
+const projects = {
+  'community-training-initiative': {
     title: "Community Training Initiative",
     description: "Implementing comprehensive training programs and workshops to build capacity within communities.",
     imageUrl: "/images/DSC01363.JPG",
@@ -34,7 +31,135 @@ export default function ProjectDetail() {
       "Implemented 15 community projects",
       "Established 5 sustainable programs"
     ]
-  };
+  },
+  'youth-development-program': {
+    title: "Youth Development Program",
+    description: "Supporting youth through education and outdoor activities to build life skills and community engagement.",
+    imageUrl: "/images/SAM_0721.JPG",
+    status: "Ongoing",
+    timeline: {
+      start: "March 2024",
+      end: "February 2025"
+    },
+    objectives: [
+      "Develop youth leadership capabilities",
+      "Promote educational excellence",
+      "Foster community engagement",
+      "Build practical life skills"
+    ],
+    impact: {
+      beneficiaries: "500+",
+      communities: "10",
+      workshops: "20",
+      trainedLeaders: "50"
+    },
+    achievements: [
+      "Established 5 youth centers",
+      "Created 10 youth-led initiatives",
+      "Organized 20 skill-building workshops",
+      "Launched 3 mentorship programs"
+    ]
+  },
+  'school-infrastructure-support': {
+    title: "School Infrastructure Support",
+    description: "Improving school facilities and infrastructure to enhance the learning environment for students.",
+    imageUrl: "/images/SAM_0724.JPG",
+    status: "Ongoing",
+    timeline: {
+      start: "February 2024",
+      end: "January 2025"
+    },
+    objectives: [
+      "Upgrade classroom facilities",
+      "Improve sanitation infrastructure",
+      "Enhance learning resources",
+      "Create safe learning spaces"
+    ],
+    impact: {
+      beneficiaries: "2,000+",
+      schools: "10",
+      classrooms: "30",
+      facilities: "15"
+    },
+    achievements: [
+      "Renovated 30 classrooms",
+      "Built 15 sanitation facilities",
+      "Installed 5 computer labs",
+      "Created 8 school libraries"
+    ]
+  },
+  'water-access-program': {
+    title: "Water Access Program",
+    description: "Improving access to clean water through infrastructure development and community management.",
+    imageUrl: "/images/SAM_1409.JPG",
+    status: "Ongoing",
+    timeline: {
+      start: "April 2024",
+      end: "March 2025"
+    },
+    objectives: [
+      "Develop water infrastructure",
+      "Implement water management systems",
+      "Train community water committees",
+      "Ensure sustainable water access"
+    ],
+    impact: {
+      beneficiaries: "5,000+",
+      communities: "12",
+      waterPoints: "20",
+      committees: "12"
+    },
+    achievements: [
+      "Installed 20 water points",
+      "Trained 12 water committees",
+      "Implemented 5 rainwater harvesting systems",
+      "Established 12 maintenance programs"
+    ]
+  },
+  'agricultural-skills-development': {
+    title: "Agricultural Skills Development",
+    description: "Training students and community members in sustainable agricultural practices.",
+    imageUrl: "/images/kamulu dalawa 028.jpg",
+    status: "Ongoing",
+    timeline: {
+      start: "May 2024",
+      end: "April 2025"
+    },
+    objectives: [
+      "Train in sustainable farming",
+      "Implement demonstration farms",
+      "Develop agricultural skills",
+      "Promote food security"
+    ],
+    impact: {
+      beneficiaries: "800+",
+      communities: "8",
+      farms: "15",
+      trainings: "30"
+    },
+    achievements: [
+      "Established 15 demonstration farms",
+      "Trained 200 farmers",
+      "Implemented 10 irrigation systems",
+      "Created 5 farmer cooperatives"
+    ]
+  }
+};
+
+export default function ProjectDetail() {
+  const { slug } = useParams();
+  const project = projects[slug as keyof typeof projects];
+
+  if (!project) {
+    return (
+      <div className="min-h-screen bg-light dark:bg-dark flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Project Not Found</h1>
+          <p className="text-gray-600 dark:text-gray-300">The project you're looking for doesn't exist.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-light dark:bg-dark">
@@ -92,30 +217,16 @@ export default function ProjectDetail() {
             <div>
               <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Project Impact</h2>
               <div className="grid md:grid-cols-4 gap-4">
-                <div className="bg-white dark:bg-dark-lighter p-6 rounded-lg text-center shadow-sm">
-                  <div className="text-3xl font-bold text-primary mb-2">
-                    {project.impact.beneficiaries}
+                {Object.entries(project.impact).map(([key, value]) => (
+                  <div key={key} className="bg-white dark:bg-dark-lighter p-6 rounded-lg text-center shadow-sm">
+                    <div className="text-3xl font-bold text-primary mb-2">
+                      {value}
+                    </div>
+                    <div className="text-gray-600 dark:text-gray-300">
+                      {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}
+                    </div>
                   </div>
-                  <div className="text-gray-600 dark:text-gray-300">People Reached</div>
-                </div>
-                <div className="bg-white dark:bg-dark-lighter p-6 rounded-lg text-center shadow-sm">
-                  <div className="text-3xl font-bold text-primary mb-2">
-                    {project.impact.communities}
-                  </div>
-                  <div className="text-gray-600 dark:text-gray-300">Communities</div>
-                </div>
-                <div className="bg-white dark:bg-dark-lighter p-6 rounded-lg text-center shadow-sm">
-                  <div className="text-3xl font-bold text-primary mb-2">
-                    {project.impact.workshops}
-                  </div>
-                  <div className="text-gray-600 dark:text-gray-300">Workshops</div>
-                </div>
-                <div className="bg-white dark:bg-dark-lighter p-6 rounded-lg text-center shadow-sm">
-                  <div className="text-3xl font-bold text-primary mb-2">
-                    {project.impact.trainedLeaders}
-                  </div>
-                  <div className="text-gray-600 dark:text-gray-300">Leaders Trained</div>
-                </div>
+                ))}
               </div>
             </div>
 
