@@ -36,28 +36,6 @@ const programs = [
       "Natural Resource Management",
       "Climate Resilience"
     ]
-  },
-  {
-    title: "Agriculture and Technology",
-    description: "Enhancing technology adoption and promoting youth technical entrepreneurship in agriculture and infrastructure development.",
-    image: "/images/students-path.jpg",
-    subPrograms: [
-      "Digital Agriculture",
-      "Smart Farming",
-      "Youth Empowerment",
-      "Technical Training"
-    ]
-  },
-  {
-    title: "Soft Skills Training",
-    description: "Supporting TVET and NITA graduates through business skills development, entrepreneurship training, and leadership development.",
-    image: "/images/students-carrying-water.jpg",
-    subPrograms: [
-      "Business Start-up Skills",
-      "Entrepreneurial Mindset",
-      "Creative Thinking",
-      "Visionary Leadership"
-    ]
   }
 ];
 

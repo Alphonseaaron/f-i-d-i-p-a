@@ -8,21 +8,21 @@ const blogPosts = [
     content: "Exploring how sustainable development practices are transforming rural communities and creating lasting positive change...",
     author: "Sarah Johnson",
     date: "2024-02-15",
-    imageUrl: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=1600"
+    imageUrl: "/images/community-gathering.jpg"
   },
   {
     title: "The Impact of Gender Equality Programs",
-    content: "Examining the transformative effects of our gender equality initiatives on communities and individual lives...",
+    description: "Examining the transformative effects of our gender equality initiatives on communities and individual lives...",
     author: "Michael Chen",
     date: "2024-02-10",
-    imageUrl: "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?auto=format&fit=crop&q=80&w=1600"
+    imageUrl: "/images/students-path.jpg"
   },
   {
     title: "Innovation in Rural Healthcare Delivery",
     content: "Discovering new approaches to delivering healthcare services in remote and underserved areas...",
     author: "Dr. Emily Roberts",
     date: "2024-02-05",
-    imageUrl: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=1600"
+    imageUrl: "/images/school-kitchen.jpg"
   }
 ];
 
