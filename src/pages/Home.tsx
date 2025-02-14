@@ -5,6 +5,7 @@ import Projects from '../sections/Projects';
 import Blog from '../sections/Blog';
 import Contact from '../sections/Contact';
 import HomeHero from '../sections/Home';
+import Team from '../sections/Team';
 
 export default function Home() {
   return (
@@ -13,6 +14,7 @@ export default function Home() {
       <About />
       <Programs />
       <Projects />
+      <Team />
       <Blog />
       <Contact />
     </div>

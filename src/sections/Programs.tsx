@@ -64,8 +64,8 @@ const programs = [
 export default function Programs() {
   return (
     <section id="programs" className="py-20 relative bg-light dark:bg-dark">
-      <div className="absolute inset-0 bg-[url('/images/community-gathering.jpg')] bg-fixed bg-cover bg-center opacity-10 dark:opacity-40" />
-      <div className="absolute inset-0 bg-white/90 dark:bg-dark/60" />
+      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=1600')] bg-fixed bg-cover bg-center opacity-50 dark:opacity-40" />
+      <div className="absolute inset-0 bg-white/80 dark:bg-dark/60 backdrop-blur-[2px]" />
       
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         <div className="flex justify-between items-center mb-12">

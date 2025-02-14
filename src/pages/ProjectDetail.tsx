@@ -9,13 +9,7 @@ export default function ProjectDetail() {
   // In a real app, fetch the project data using the slug
   const project = {
     title: "Community Training Initiative",
-    description: `Our Community Training Initiative is focused on implementing comprehensive training programs and workshops to build capacity within communities, with a special emphasis on sustainable development and community leadership.
-
-    This project aims to:
-    • Enhance community leadership skills
-    • Promote sustainable development practices
-    • Build local capacity for project management
-    • Establish long-term community development frameworks`,
+    description: `Our Community Training Initiative is focused on implementing comprehensive training programs and workshops to build capacity within communities, with a special emphasis on sustainable development and community leadership.`,
     imageUrl: "/images/community-gathering.jpg",
     status: "Ongoing",
     timeline: {
@@ -23,10 +17,10 @@ export default function ProjectDetail() {
       end: "December 2024"
     },
     objectives: [
-      "Develop community leadership skills",
-      "Promote sustainable practices",
-      "Build local project management capacity",
-      "Establish development frameworks"
+      "Enhance community leadership skills",
+      "Promote sustainable development practices",
+      "Build local capacity for project management",
+      "Establish long-term community development frameworks"
     ],
     impact: {
       beneficiaries: "1,000+",
@@ -73,11 +67,9 @@ export default function ProjectDetail() {
             </div>
             
             <div className="prose prose-invert max-w-none">
-              {project.description.split('\n\n').map((paragraph, index) => (
-                <p key={index} className="mb-4 text-gray-300 leading-relaxed">
-                  {paragraph}
-                </p>
-              ))}
+              <p className="mb-4 text-gray-300 leading-relaxed">
+                {project.description}
+              </p>
             </div>
 
             <div>
