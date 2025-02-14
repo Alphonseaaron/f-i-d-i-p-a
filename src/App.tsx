@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import HomePage from './pages/Home';
 import BlogPage from './pages/Blog';
 import ProjectsPage from './pages/Projects';
@@ -15,21 +16,25 @@ import ProjectDetailPage from './pages/ProjectDetail';
 function AppContent() {
   const location = useLocation();
   const showNavbar = location.pathname === '/';
+  const isAdmin = location.pathname === '/admin';
 
   return (
-    <div className="min-h-screen bg-white dark:bg-dark text-dark dark:text-white">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-dark text-dark dark:text-white">
       {showNavbar && <Navbar />}
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/blog" element={<BlogPage />} />
-        <Route path="/blog/:slug" element={<BlogPostPage />} />
-        <Route path="/projects" element={<ProjectsPage />} />
-        <Route path="/projects/:slug" element={<ProjectDetailPage />} />
-        <Route path="/programs" element={<ProgramsPage />} />
-        <Route path="/programs/:slug" element={<ProgramDetailPage />} />
-        <Route path="/write-for-us" element={<WriteForUsPage />} />
-        <Route path="/admin" element={<AdminPanel />} />
-      </Routes>
+      <div className="flex-1">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/blog/:slug" element={<BlogPostPage />} />
+          <Route path="/projects" element={<ProjectsPage />} />
+          <Route path="/projects/:slug" element={<ProjectDetailPage />} />
+          <Route path="/programs" element={<ProgramsPage />} />
+          <Route path="/programs/:slug" element={<ProgramDetailPage />} />
+          <Route path="/write-for-us" element={<WriteForUsPage />} />
+          <Route path="/admin" element={<AdminPanel />} />
+        </Routes>
+      </div>
+      {!isAdmin && <Footer />}
     </div>
   );
 }
@@ -42,4 +47,4 @@ function App() {
   );
 }
 
-export default App
+export default App;
