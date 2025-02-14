@@ -6,27 +6,27 @@ const slides = [
   {
     text: "Friendly Integrated Development Initiative in Poverty Alleviation (FIDIPA)",
     subtext: "A holistic peaceful and democratic society with justice for all",
-    image: "/images/DSC01363.JPG"
+    image: "/image/DSC01363.JPG"
   },
   {
     text: "Empowering Communities Since 2007",
     subtext: "Registered under the NGO Act of Kenya as a National NGO",
-    image: "/images/SAM_0721.JPG"
+    image: "/image/SAM_0721.JPG"
   },
   {
     text: "Fostering Unity and Effective Participation",
     subtext: "Working with urban and rural communities for sustainable development",
-    image: "/images/SAM_0724.JPG"
+    image: "/image/SAM_0724.JPG"
   },
   {
     text: "Human Rights Based Approach",
     subtext: "Empowering women and girls to claim their rights",
-    image: "/images/SAM_0790.JPG"
+    image: "/image/SAM_0790.JPG"
   },
   {
     text: "Supporting Education and Infrastructure",
     subtext: "Building better facilities and resources for our communities",
-    image: "/images/SAM_1409.JPG"
+    image: "/image/SAM_1409.JPG"
   }
 ];
 

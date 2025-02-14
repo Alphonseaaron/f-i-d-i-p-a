@@ -7,31 +7,31 @@ const projects = [
   {
     title: "Community Training Initiative",
     description: "Implementing comprehensive training programs and workshops to build capacity within communities.",
-    imageUrl: "/images/DSC01363.JPG",
+    imageUrl: "/image/DSC01363.JPG",
     status: "Ongoing"
   },
   {
     title: "Youth Development Program",
     description: "Supporting youth through education and outdoor activities to build life skills and community engagement.",
-    imageUrl: "/images/SAM_0721.JPG",
+    imageUrl: "/image/SAM_0721.JPG",
     status: "Ongoing"
   },
   {
     title: "School Infrastructure Support",
     description: "Improving school facilities and infrastructure to enhance the learning environment for students.",
-    imageUrl: "/images/SAM_0724.JPG",
+    imageUrl: "/image/SAM_0724.JPG",
     status: "Ongoing"
   },
   {
     title: "Water Access Program",
     description: "Improving access to clean water through infrastructure development and community management.",
-    imageUrl: "/images/SAM_1409.JPG",
+    imageUrl: "/image/SAM_1409.JPG",
     status: "Ongoing"
   },
   {
     title: "Agricultural Skills Development",
     description: "Training students and community members in sustainable agricultural practices.",
-    imageUrl: "/images/kamulu dalawa 028.jpg",
+    imageUrl: "/image/kamulu dalawa 028.jpg",
     status: "Ongoing"
   }
 ];

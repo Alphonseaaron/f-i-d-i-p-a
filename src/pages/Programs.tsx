@@ -6,7 +6,7 @@ const programs = [
   {
     title: "Gender Equality and Social Inclusion",
     description: "Empowering communities to address gender inequality and social inclusion through training community paralegals, youth, and women as community resource persons.",
-    image: "/images/DSC05379.JPG",
+    image: "/image/DSC05379.JPG",
     subPrograms: [
       {
         name: "Women with Disability (WWD)",
@@ -33,7 +33,7 @@ const programs = [
   {
     title: "Grandmothers and Orphans Support",
     description: "Supporting grandmothers caring for orphans and vulnerable children (OVC) through health, nutrition, and economic empowerment initiatives.",
-    image: "/images/SAM_1418.JPG",
+    image: "/image/SAM_1418.JPG",
     subPrograms: [
       {
         name: "Health Support",
@@ -56,7 +56,7 @@ const programs = [
   {
     title: "Environment and Food Security",
     description: "Implementing sustainable farming methods and conservation agriculture to increase yields and promote drought-resistant crops.",
-    image: "/images/kamulu dalawa 028.jpg",
+    image: "/image/kamulu dalawa 028.jpg",
     subPrograms: [
       {
         name: "Sustainable Land Management",
@@ -79,7 +79,7 @@ const programs = [
   {
     title: "Agriculture and Technology",
     description: "Enhancing technology adoption and promoting youth technical entrepreneurship in agriculture and infrastructure development.",
-    image: "/images/SAM_0721.JPG",
+    image: "/image/SAM_0721.JPG",
     subPrograms: [
       {
         name: "Digital Agriculture",
@@ -102,7 +102,7 @@ const programs = [
   {
     title: "Soft Skills Training",
     description: "Supporting TVET and NITA graduates through business skills development, entrepreneurship training, and leadership development.",
-    image: "/images/SAM_0724.JPG",
+    image: "/image/SAM_0724.JPG",
     subPrograms: [
       {
         name: "Business Start-up Skills",
