@@ -5,31 +5,23 @@ import { ChevronLeft, ChevronRight, User } from 'lucide-react';
 const staffMembers = [
   {
     name: "Ms Jayne A. I. Wasonga",
-    role: "Board Secretary and Chief Executive Officer",
-    expertise: "Gender and Project Management Expert",
-    education: "M.A Planning and Management – Catholic University of Eastern Africa 2016 and Candidate MA Theology Christian Leadership Great Lakes University of Kisumu"
+    role: "Board Secretary and Chief Executive Officer"
   },
   {
     name: "Ms Jesca Mitaya",
-    role: "Finance and Administration FAM Manager",
-    expertise: "Finance and Economic Expert",
-    education: "BA Economics University of Nairobi- 2005"
+    role: "Finance and Administration FAM Manager"
   },
   {
     name: "Ms Linda Otieno",
-    role: "Project Lead (Volunteer)",
-    expertise: "Youth and Women Environment and Smallholders Farmers project",
-    education: "BA Relations and Diplomacy Maseno University 2019 and Candidate for Public Policy and Administration Kenyatta University"
+    role: "Project Lead (Volunteer)"
   },
   {
     name: "Rev. Walter Ang'ienda",
-    role: "Program Officer Peace Project (Volunteer)",
-    education: "Karen Christian College 2000"
+    role: "Program Officer Peace Project (Volunteer)"
   },
   {
     name: "Phillip Noel",
-    role: "Volunteer, Soft Skills (Water and Sanitation)",
-    education: "Water Resource Management - University of Eldoret"
+    role: "Volunteer, Soft Skills (Water and Sanitation)"
   },
   {
     name: "Jackson Lesian",
@@ -37,48 +29,38 @@ const staffMembers = [
   },
   {
     name: "Jamima Mtuli",
-    role: "Administer/Programs Assistant",
-    education: "Medical Training School Siaya 2019 Health Records"
+    role: "Administer/Programs Assistant"
   }
 ];
 
 const boardMembers = [
   {
     name: "Mrs Rosemary Meyo",
-    role: "Chairperson",
-    education: "MA Administration, Maseno University 2012"
+    role: "Chairperson"
   },
   {
     name: "Dr. Josephine Munthali",
-    role: "Vice Chairperson",
-    expertise: "Gender and Education",
-    education: "University of Edinburgh UK 2001"
+    role: "Vice Chairperson"
   },
   {
     name: "Ms Jayne A. Wasonga",
-    role: "Chief Executive Officer and Board Secretary",
-    education: "M.A Project Planning and Management – The Catholic University of Eastern Africa (CUEA) 2016"
+    role: "Chief Executive Officer and Board Secretary"
   },
   {
     name: "Sr. Mildred Mayeye",
-    role: "Treasurer",
-    education: "Lwak Training School"
+    role: "Treasurer"
   },
   {
     name: "Dr. Rev. Simon Oriedo",
-    role: "Member",
-    education: "African International University (2018)"
+    role: "Member"
   },
   {
     name: "Mr. Samwel Otieno",
-    role: "Committee Member",
-    education: "B. Com University of Nairobi"
+    role: "Committee Member"
   },
   {
     name: "Prof. Esther Mombo",
-    role: "Committee Member",
-    expertise: "Gender and Theology",
-    education: "Lecturer at St. Paul University Limuru and part-time Yale University"
+    role: "Committee Member"
   }
 ];
 
@@ -144,8 +126,8 @@ function TeamCarousel({ members }: { members: typeof staffMembers }) {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="flex-1 min-w-0 bg-white dark:bg-dark-lighter rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow border border-gray-200 dark:border-gray-700"
               style={{ 
-                minHeight: '300px',
-                maxHeight: '300px',
+                minHeight: '200px',
+                maxHeight: '200px',
                 width: `${100 / itemsPerPage}%`
               }}
             >
@@ -157,19 +139,9 @@ function TeamCarousel({ members }: { members: typeof staffMembers }) {
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                     {member.name}
                   </h3>
-                  <p className="text-primary font-medium mb-2 text-sm">
+                  <p className="text-primary font-medium text-sm">
                     {member.role}
                   </p>
-                  {member.expertise && (
-                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
-                      {member.expertise}
-                    </p>
-                  )}
-                  {member.education && (
-                    <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2">
-                      {member.education}
-                    </p>
-                  )}
                 </div>
               </div>
             </motion.div>

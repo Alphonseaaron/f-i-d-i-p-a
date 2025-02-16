@@ -61,7 +61,7 @@ export default function Contact() {
           </motion.div>
 
           <motion.button
-            onClick={() => handlePhoneClick('+254722782869')}
+            onClick={() => handlePhoneClick('+254735443379')}
             whileHover={{ y: -8 }}
             className="bg-white dark:bg-dark p-6 rounded-lg shadow-lg dark:shadow-none text-left hover:shadow-xl dark:hover:bg-dark-accent transition-all duration-300 relative overflow-hidden group w-full"
           >
@@ -69,7 +69,7 @@ export default function Contact() {
             <div className="relative z-10">
               <Phone className="w-8 h-8 text-primary mb-4" />
               <h3 className="font-semibold text-lg mb-2 text-gray-900 dark:text-white">Phone</h3>
-              <p className="text-gray-600 dark:text-gray-300">+254 722 782 869</p>
+              <p className="text-gray-600 dark:text-gray-300">+254 735 443 379</p>
             </div>
           </motion.button>
 
@@ -105,24 +105,6 @@ export default function Contact() {
               <h3 className="font-semibold text-lg mb-2 text-gray-900 dark:text-white">Website & Address</h3>
               <p className="text-gray-600 dark:text-gray-300">www.fidipa.org</p>
               <p className="text-gray-600 dark:text-gray-300 mt-2">P.O. Box 62226, Code 00200 Nairobi</p>
-            </div>
-          </motion.div>
-
-          <motion.div
-            whileHover={{ y: -8 }}
-            className="bg-white dark:bg-dark p-6 rounded-lg shadow-lg dark:shadow-none text-left hover:shadow-xl dark:hover:bg-dark-accent transition-all duration-300 relative overflow-hidden group"
-          >
-            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1601597111158-2fceff292cdc?auto=format&fit=crop&q=80&w=1600')] bg-cover bg-center opacity-5 dark:opacity-10 group-hover:opacity-10 dark:group-hover:opacity-20 transition-opacity duration-300" />
-            <div className="relative z-10">
-              <Building2 className="w-8 h-8 text-primary mb-4" />
-              <h3 className="font-semibold text-lg mb-2 text-gray-900 dark:text-white">Bank Details</h3>
-              <div className="text-gray-600 dark:text-gray-300">
-                <p>Bank Name: ABSA Kenya, Kisumu branch</p>
-                <p>Account number: 2021887687</p>
-                <p>Account name: FIDIPA</p>
-                <p>Bank Code: 009</p>
-                <p>Swift Code: BARCKENX</p>
-              </div>
             </div>
           </motion.div>
         </motion.div>
