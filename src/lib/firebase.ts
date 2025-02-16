@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
 import { getFirestore } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
+import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBZr0_qHaBuqwJ_N5oJ5UQgcMMC5BILb3U",
@@ -17,9 +17,19 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const analytics = getAnalytics(app);
 export const db = getFirestore(app);
-export const auth = getAuth(app);
+export const storage = getStorage(app);
 
-// Section visibility settings
+// Collection names
+export const COLLECTIONS = {
+  SECTIONS: 'sections',
+  BLOG_POSTS: 'blog_posts',
+  PROGRAMS: 'programs',
+  PROJECTS: 'projects',
+  SITE_CONFIG: 'site_config',
+  TEAM: 'team'
+} as const;
+
+// Default sections visibility
 export const defaultSections = {
   home: true,
   about: true,

@@ -1,3 +1,5 @@
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+import { storage } from './firebase';
 import { nanoid } from 'nanoid';
 
 interface UploadResponse {
@@ -9,10 +11,11 @@ export async function uploadFile(file: File, folder: string = 'uploads'): Promis
   try {
     const fileExtension = file.name.split('.').pop();
     const uniqueFilename = `${nanoid()}.${fileExtension}`;
-    const path = `/assets/${folder}/${uniqueFilename}`;
+    const path = `${folder}/${uniqueFilename}`;
+    const storageRef = ref(storage, path);
     
-    // Create a URL for the file
-    const url = URL.createObjectURL(file);
+    await uploadBytes(storageRef, file);
+    const url = await getDownloadURL(storageRef);
     
     return {
       url,
@@ -26,9 +29,8 @@ export async function uploadFile(file: File, folder: string = 'uploads'): Promis
 
 export async function deleteFile(path: string): Promise<void> {
   try {
-    // In a local storage setup, we don't need to do anything here
-    // The files will be managed by the build system
-    console.log('File deletion not implemented for local storage:', path);
+    const fileRef = ref(storage, path);
+    await deleteObject(fileRef);
   } catch (error) {
     console.error('Error deleting file:', error);
     throw error;
