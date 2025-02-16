@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Settings, FileImage, Layout, BookOpen, Target, Users, Plus, Trash2, Edit, Eye, LogOut, Sun, Moon } from 'lucide-react';
-import { collection, query, orderBy, getDocs, updateDoc, doc, addDoc, deleteDoc } from 'firebase/firestore';
+import { collection, query, orderBy, getDocs, updateDoc, doc, addDoc, deleteDoc, setDoc, getDoc } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { useAuth } from '../../lib/auth';
 import { uploadFile, deleteFile } from '../../lib/storage';
@@ -9,6 +9,7 @@ import ContentForm from '../../components/admin/ContentForm';
 import MediaUploader from '../../components/admin/MediaUploader';
 import Editor from '../../components/admin/Editor';
 import { useTheme } from '../../hooks/useTheme';
+import { defaultSections } from '../../lib/firebase';
 
 interface ContentItem {
   id: string;
@@ -484,6 +485,56 @@ export default function AdminPanel() {
                             onUploadComplete={(url) => setSiteConfig({ ...siteConfig, favicon_url: url })}
                             folder="site"
                           />
+                        </div>
+                      </div>
+
+                      <div>
+                        <h3 className="text-lg font-medium mb-4">Section Visibility</h3>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                          {Object.entries(defaultSections).map(([section, defaultValue]) => {
+                            const [isVisible, setIsVisible] = useState(defaultValue);
+
+                            useEffect(() => {
+                              const fetchSectionVisibility = async () => {
+                                const docRef = doc(db, 'site_config', 'sections');
+                                const docSnap = await getDoc(docRef);
+                                if (docSnap.exists()) {
+                                  setIsVisible(docSnap.data()[section]);
+                                }
+                              };
+                              fetchSectionVisibility();
+                            }, [section]);
+
+                            const toggleSection = async () => {
+                              const newValue = !isVisible;
+                              setIsVisible(newValue);
+                              
+                              const docRef = doc(db, 'site_config', 'sections');
+                              await setDoc(docRef, {
+                                ...defaultSections,
+                                [section]: newValue
+                              }, { merge: true });
+                            };
+
+                            return (
+                              <div key={section} className="flex items-center justify-between p-4 bg-light dark:bg-dark rounded-lg">
+                                <span className="text-gray-900 dark:text-white capitalize">{section}</span>
+                                <button
+                                  type="button"
+                                  onClick={toggleSection}
+                                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                                    isVisible ? 'bg-primary' : 'bg-gray-400'
+                                  }`}
+                                >
+                                  <span
+                                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                                      isVisible ? 'translate-x-6' : 'translate-x-1'
+                                    }`}
+                                  />
+                                </button>
+                              </div>
+                            );
+                          })}
                         </div>
                       </div>
 

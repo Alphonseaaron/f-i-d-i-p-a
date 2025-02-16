@@ -2,11 +2,32 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, Sun, Moon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../hooks/useTheme';
+import { db } from '../lib/firebase';
+import { doc, onSnapshot } from 'firebase/firestore';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const { theme, toggleTheme } = useTheme();
+  const [visibleSections, setVisibleSections] = useState<Record<string, boolean>>({
+    home: true,
+    about: true,
+    programs: true,
+    projects: true,
+    team: true,
+    blog: true,
+    contact: true
+  });
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(doc(db, 'site_config', 'sections'), (doc) => {
+      if (doc.exists()) {
+        setVisibleSections(doc.data() as Record<string, boolean>);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const menuItems = [
     { title: 'Home', id: 'home' },
@@ -16,7 +37,7 @@ export default function Navbar() {
     { title: 'Team', id: 'team' },
     { title: 'Blog', id: 'blog' },
     { title: 'Contact', id: 'contact' },
-  ];
+  ].filter(item => visibleSections[item.id]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,7 +59,7 @@ export default function Navbar() {
     };
 
     window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Initial check
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 

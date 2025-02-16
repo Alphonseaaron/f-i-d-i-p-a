@@ -19,4 +19,15 @@ export const analytics = getAnalytics(app);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
 
+// Section visibility settings
+export const defaultSections = {
+  home: true,
+  about: true,
+  programs: true,
+  projects: true,
+  team: true,
+  blog: true,
+  contact: true
+};
+
 export default app;
