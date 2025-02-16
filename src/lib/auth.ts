@@ -1,5 +1,11 @@
 import { useState, useEffect } from 'react';
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, User } from 'firebase/auth';
+import { 
+  getAuth, 
+  signInWithEmailAndPassword, 
+  signOut, 
+  onAuthStateChanged, 
+  User 
+} from 'firebase/auth';
 import app from './firebase';
 
 const auth = getAuth(app);
@@ -22,7 +28,7 @@ export function useAuth() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setAuthState({
-        isAuthenticated: !!user,
+        isAuthenticated: !!user && user.email === 'admin@fidipa.org',
         isLoading: false,
         error: null,
         user
