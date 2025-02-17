@@ -15,28 +15,37 @@ To access the admin panel:
 - Use a secure, private browser session
 - Enable 2FA if available
 
-## Deployment Instructions
+## Development Instructions
 
-To deploy the website:
-
-1. Install Firebase CLI:
+1. Install dependencies:
    ```bash
-   npm install -g firebase-tools
+   npm install
    ```
 
-2. Login to Firebase:
-   ```bash
-   firebase login
+2. Set up environment variables:
+   Create a `.env` file with the following:
+   ```
+   VITE_SUPABASE_URL=your-supabase-url
+   VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
    ```
 
-3. Build the project:
+3. Start development server:
+   ```bash
+   npm run dev
+   ```
+
+4. Build for production:
    ```bash
    npm run build
    ```
 
-4. Deploy to Firebase:
-   ```bash
-   firebase deploy
-   ```
+## Database Schema
 
-The site will be deployed to: https://f-i-d-i-p-a.web.app
+The application uses Supabase for data storage with the following tables:
+
+- `users`: User authentication and roles
+- `blog_posts`: Blog content and metadata
+- `programs`: Program information
+- `projects`: Project details
+- `sections`: Website section content
+- `site_config`: Global site configuration
