@@ -1,84 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
-import type { Database } from '../lib/database.types';
-import { Loader2 } from 'lucide-react';
+import { programs } from '../data';
 import ImageCarousel from '../components/ImageCarousel';
-import { getAllTopicImages } from '../lib/utils';
-
-type Program = Database['public']['Tables']['programs']['Row'];
-
-interface ProgramWithImages extends Program {
-  images: string[];
-}
 
 export default function Programs() {
-  const [programs, setPrograms] = useState<ProgramWithImages[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchPrograms();
-
-    const channel = supabase
-      .channel('programs-changes')
-      .on('postgres_changes', 
-        { event: '*', schema: 'public', table: 'programs' },
-        () => {
-          fetchPrograms();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
-
-  const fetchPrograms = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('programs')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(3);
-
-      if (error) throw error;
-
-      const programsWithImages = (data || []).map(program => ({
-        ...program,
-        images: getAllTopicImages(program.title)
-      }));
-
-      setPrograms(programsWithImages);
-    } catch (error) {
-      console.error('Error fetching programs:', error);
-      setError('Failed to load programs');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
-    return (
-      <section id="programs" className="py-20 relative bg-light dark:bg-dark">
-        <div className="max-w-7xl mx-auto px-4 flex justify-center">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        </div>
-      </section>
-    );
-  }
-
-  if (error) {
-    return (
-      <section id="programs" className="py-20 relative bg-light dark:bg-dark">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <p className="text-red-500 dark:text-red-400">{error}</p>
-        </div>
-      </section>
-    );
-  }
+  const [displayedPrograms, setDisplayedPrograms] = useState(programs.slice(0, 3));
 
   return (
     <section id="programs" className="py-20 relative bg-light dark:bg-dark">
@@ -107,7 +34,7 @@ export default function Programs() {
         </div>
         
         <div className="grid md:grid-cols-3 gap-8">
-          {programs.map((program, index) => (
+          {displayedPrograms.map((program, index) => (
             <motion.div
               key={program.id}
               initial={{ opacity: 0, y: 20 }}
