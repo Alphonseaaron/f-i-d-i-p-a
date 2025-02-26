@@ -4,30 +4,37 @@ import { ChevronLeft, ChevronRight, User } from 'lucide-react';
 
 const staffMembers = [
   {
+    id: "1",
     name: "Ms Jayne A. I. Wasonga",
     role: "Board Secretary and Chief Executive Officer"
   },
   {
+    id: "2",
     name: "Ms Jesca Mitaya",
     role: "Finance and Administration FAM Manager"
   },
   {
+    id: "3",
     name: "Ms Linda Otieno",
     role: "Project Lead (Volunteer)"
   },
   {
+    id: "4",
     name: "Rev. Walter Ang'ienda",
     role: "Program Officer Peace Project (Volunteer)"
   },
   {
+    id: "5",
     name: "Phillip Noel",
     role: "Volunteer, Soft Skills (Water and Sanitation)"
   },
   {
+    id: "6",
     name: "Jackson Lesian",
     role: "Office Assistant/Driver"
   },
   {
+    id: "7",
     name: "Jamima Mtuli",
     role: "Administer/Programs Assistant"
   }
@@ -35,36 +42,48 @@ const staffMembers = [
 
 const boardMembers = [
   {
+    id: "1",
     name: "Mrs Rosemary Meyo",
-    role: "Chairperson"
+    role: "Chairperson - Governance and Administration Expert"
   },
   {
+    id: "2",
     name: "Dr. Josephine Munthali",
-    role: "Vice Chairperson"
+    role: "Vice Chairperson - Gender and Education Expert"
   },
   {
+    id: "3",
     name: "Ms Jayne A. Wasonga",
     role: "Chief Executive Officer and Board Secretary"
   },
   {
+    id: "4",
     name: "Sr. Mildred Mayeye",
     role: "Treasurer"
   },
   {
+    id: "5",
     name: "Dr. Rev. Simon Oriedo",
-    role: "Member"
+    role: "Committee Member"
   },
   {
+    id: "6",
     name: "Mr. Samwel Otieno",
     role: "Committee Member"
   },
   {
+    id: "7",
     name: "Prof. Esther Mombo",
+    role: "Committee Member"
+  },
+  {
+    id: "8",
+    name: "Ms Leah O. Wanaswa",
     role: "Committee Member"
   }
 ];
 
-function TeamCarousel({ members }: { members: typeof staffMembers }) {
+function TeamCarousel({ members }: { members: any[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [itemsPerPage, setItemsPerPage] = useState(3);
@@ -116,20 +135,15 @@ function TeamCarousel({ members }: { members: typeof staffMembers }) {
   return (
     <div className="relative">
       <div className="mx-12">
-        <div className="flex gap-6 overflow-hidden">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {visibleMembers.map((member, index) => (
             <motion.div
-              key={member.name}
+              key={member.id}
               initial={{ opacity: 0, x: 100 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -100 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="flex-1 min-w-0 bg-white dark:bg-dark-lighter rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow border border-gray-200 dark:border-gray-700"
-              style={{ 
-                minHeight: '200px',
-                maxHeight: '200px',
-                width: `${100 / itemsPerPage}%`
-              }}
+              className="bg-white dark:bg-dark-lighter rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow border border-gray-200 dark:border-gray-700"
             >
               <div className="flex flex-col h-full items-center text-center">
                 <div className="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">

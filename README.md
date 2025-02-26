@@ -48,4 +48,4 @@ The application uses Supabase for data storage with the following tables:
 - `programs`: Program information
 - `projects`: Project details
 - `sections`: Website section content
-- `site_config`: Global site configuration
+- `site_config`: Global site configuration# FIDIPA

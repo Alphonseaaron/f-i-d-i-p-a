@@ -1,9 +1,12 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import csv from 'vite-plugin-csv';
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    csv()
+  ],
   optimizeDeps: {
     exclude: ['lucide-react'],
   },

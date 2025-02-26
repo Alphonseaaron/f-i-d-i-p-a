@@ -1,130 +1,69 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
+import type { Database } from '../lib/database.types';
 import BackButton from '../components/BackButton';
+import { Loader2 } from 'lucide-react';
 
-const programs = [
-  {
-    title: "Gender Equality and Social Inclusion",
-    description: "Empowering communities to address gender inequality and social inclusion through training community paralegals, youth, and women as community resource persons.",
-    image: "/image/DSC05379.JPG",
-    subPrograms: [
-      {
-        name: "Women with Disability (WWD)",
-        description: "Supporting and empowering women with disabilities to overcome challenges and achieve economic independence."
-      },
-      {
-        name: "Women in and out of prisons",
-        description: "Providing support and rehabilitation services for women affected by the justice system."
-      },
-      {
-        name: "Young Widows Support",
-        description: "Protecting and empowering young widows against cultural practices and economic challenges."
-      },
-      {
-        name: "Girls Education and Mentorship",
-        description: "Reducing teenage pregnancy and school dropout rates while improving education standards."
-      },
-      {
-        name: "Women in Leadership",
-        description: "Promoting women's participation in leadership, politics, and environmental positions."
-      }
-    ]
-  },
-  {
-    title: "Grandmothers and Orphans Support",
-    description: "Supporting grandmothers caring for orphans and vulnerable children (OVC) through health, nutrition, and economic empowerment initiatives.",
-    image: "/image/SAM_1418.JPG",
-    subPrograms: [
-      {
-        name: "Health Support",
-        description: "Providing healthcare access and support for affected families."
-      },
-      {
-        name: "Nutrition Programs",
-        description: "Ensuring proper nutrition for vulnerable children and their caregivers."
-      },
-      {
-        name: "Economic Empowerment",
-        description: "Creating sustainable income opportunities for grandmother-led households."
-      },
-      {
-        name: "Education Support",
-        description: "Facilitating access to education for orphans and vulnerable children."
-      }
-    ]
-  },
-  {
-    title: "Environment and Food Security",
-    description: "Implementing sustainable farming methods and conservation agriculture to increase yields and promote drought-resistant crops.",
-    image: "/image/kamulu dalawa 028.jpg",
-    subPrograms: [
-      {
-        name: "Sustainable Land Management",
-        description: "Promoting environmentally friendly farming practices and soil conservation."
-      },
-      {
-        name: "Income Generation",
-        description: "Creating sustainable income sources through agricultural activities."
-      },
-      {
-        name: "Natural Resource Management",
-        description: "Training communities in sustainable use of natural resources."
-      },
-      {
-        name: "Climate Resilience",
-        description: "Building community resilience against climate change impacts."
-      }
-    ]
-  },
-  {
-    title: "Agriculture and Technology",
-    description: "Enhancing technology adoption and promoting youth technical entrepreneurship in agriculture and infrastructure development.",
-    image: "/image/SAM_0721.JPG",
-    subPrograms: [
-      {
-        name: "Digital Agriculture",
-        description: "Introducing modern farming technologies and digital solutions."
-      },
-      {
-        name: "Smart Farming",
-        description: "Training in advanced agricultural techniques and technologies."
-      },
-      {
-        name: "Youth Empowerment",
-        description: "Supporting youth participation in agricultural entrepreneurship."
-      },
-      {
-        name: "Technical Training",
-        description: "Providing technical skills for agricultural modernization."
-      }
-    ]
-  },
-  {
-    title: "Soft Skills Training",
-    description: "Supporting TVET and NITA graduates through business skills development, entrepreneurship training, and leadership development.",
-    image: "/image/SAM_0724.JPG",
-    subPrograms: [
-      {
-        name: "Business Start-up Skills",
-        description: "Training in essential business development and management skills."
-      },
-      {
-        name: "Entrepreneurial Mindset",
-        description: "Developing entrepreneurial thinking and opportunity recognition."
-      },
-      {
-        name: "Creative Thinking",
-        description: "Fostering innovation and problem-solving abilities."
-      },
-      {
-        name: "Visionary Leadership",
-        description: "Building leadership capabilities for community development."
-      }
-    ]
-  }
-];
+type Program = Database['public']['Tables']['programs']['Row'];
 
 export default function Programs() {
+  const [programs, setPrograms] = useState<Program[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchPrograms();
+
+    const channel = supabase
+      .channel('programs-changes')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'programs' },
+        () => {
+          fetchPrograms();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  const fetchPrograms = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('programs')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setPrograms(data || []);
+    } catch (error) {
+      console.error('Error fetching programs:', error);
+      setError('Failed to load programs');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-light dark:bg-dark flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-light dark:bg-dark flex items-center justify-center">
+        <p className="text-red-500 dark:text-red-400">{error}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="pt-24 pb-16 min-h-screen bg-light dark:bg-dark">
       <BackButton />
@@ -140,7 +79,7 @@ export default function Programs() {
         <div className="space-y-12">
           {programs.map((program, index) => (
             <motion.div
-              key={program.title}
+              key={program.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
@@ -149,30 +88,43 @@ export default function Programs() {
               <div className="md:flex">
                 <div className="md:w-1/3">
                   <img 
-                    src={program.image} 
+                    src={program.image_url || 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=1600'} 
                     alt={program.title}
                     className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="p-6 md:w-2/3">
-                  <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">{program.title}</h2>
-                  <p className="text-gray-600 dark:text-gray-300 mb-6">{program.description}</p>
+                  <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
+                    {program.title}
+                  </h2>
+                  <p className="text-gray-600 dark:text-gray-300 mb-6">
+                    {program.description}
+                  </p>
                   
-                  <div className="grid md:grid-cols-2 gap-4">
-                    {program.subPrograms.map((subProgram, idx) => (
-                      <div 
-                        key={idx}
-                        className="bg-light-darker dark:bg-dark p-4 rounded-lg"
-                      >
-                        <h3 className="text-lg font-semibold mb-2 text-primary">
-                          {subProgram.name}
-                        </h3>
-                        <p className="text-gray-600 dark:text-gray-400 text-sm">
-                          {subProgram.description}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
+                  {program.content && (
+                    <div className="grid md:grid-cols-2 gap-4">
+                      {program.content.split('•').slice(1).map((point, idx) => (
+                        <div 
+                          key={idx}
+                          className="bg-light-darker dark:bg-dark p-4 rounded-lg"
+                        >
+                          <p className="text-gray-600 dark:text-gray-400 text-sm">
+                            {point.trim()}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  
+                  <Link
+                    to={`/programs/${program.slug}`}
+                    className="mt-6 inline-flex items-center text-primary hover:text-primary/80 transition-colors"
+                  >
+                    Learn More
+                    <svg className="w-4 h-4 ml-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                  </Link>
                 </div>
               </div>
             </motion.div>

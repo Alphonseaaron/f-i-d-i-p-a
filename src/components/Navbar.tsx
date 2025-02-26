@@ -2,31 +2,44 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, Sun, Moon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../hooks/useTheme';
-import { db } from '../lib/firebase';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { supabase } from '../lib/supabase';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const { theme, toggleTheme } = useTheme();
-  const [visibleSections, setVisibleSections] = useState<Record<string, boolean>>({
+  const [visibleSections, setVisibleSections] = useState({
     home: true,
     about: true,
     programs: true,
     projects: true,
     team: true,
-    blog: true,
+    blog: false, // Blog section hidden
     contact: true
   });
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(doc(db, 'site_config', 'sections'), (doc) => {
-      if (doc.exists()) {
-        setVisibleSections(doc.data() as Record<string, boolean>);
+    const fetchSiteConfig = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('site_config')
+          .select('sections')
+          .single();
+        
+        if (error) {
+          console.error('Error fetching site config:', error);
+          return; // Keep default values if there's an error
+        }
+        
+        if (data?.sections) {
+          setVisibleSections(data.sections);
+        }
+      } catch (error) {
+        console.error('Error in fetchSiteConfig:', error);
       }
-    });
+    };
 
-    return () => unsubscribe();
+    fetchSiteConfig();
   }, []);
 
   const menuItems = [
@@ -35,7 +48,6 @@ export default function Navbar() {
     { title: 'Programs', id: 'programs' },
     { title: 'Projects', id: 'projects' },
     { title: 'Team', id: 'team' },
-    { title: 'Blog', id: 'blog' },
     { title: 'Contact', id: 'contact' },
   ].filter(item => visibleSections[item.id]);
 

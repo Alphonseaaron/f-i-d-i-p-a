@@ -1,45 +1,85 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
+import type { Database } from '../lib/database.types';
+import { Loader2 } from 'lucide-react';
+import ImageCarousel from '../components/ImageCarousel';
+import { getAllTopicImages } from '../lib/utils';
 
-const programs = [
-  {
-    title: "Gender Equality and Social Inclusion",
-    description: "Empowering communities to address gender inequality and social inclusion through training community paralegals, youth, and women as community resource persons.",
-    image: "/src/assets/images/DSC05379.JPG",
-    subPrograms: [
-      "Women with Disability (WWD)",
-      "Women in and out of prisons",
-      "Young Widows Support",
-      "Girls Education and Mentorship",
-      "Women in Leadership"
-    ]
-  },
-  {
-    title: "Grandmothers and Orphans Support",
-    description: "Supporting grandmothers caring for orphans and vulnerable children (OVC) through health, nutrition, and economic empowerment initiatives.",
-    image: "/src/assets/images/SAM_1418.JPG",
-    subPrograms: [
-      "Health Support",
-      "Nutrition Programs",
-      "Economic Empowerment",
-      "Education Support"
-    ]
-  },
-  {
-    title: "Environment and Food Security",
-    description: "Implementing sustainable farming methods and conservation agriculture to increase yields and promote drought-resistant crops.",
-    image: "/src/assets/images/kamulu dalawa 028.jpg",
-    subPrograms: [
-      "Sustainable Land Management",
-      "Income Generation",
-      "Natural Resource Management",
-      "Climate Resilience"
-    ]
-  }
-];
+type Program = Database['public']['Tables']['programs']['Row'];
+
+interface ProgramWithImages extends Program {
+  images: string[];
+}
 
 export default function Programs() {
+  const [programs, setPrograms] = useState<ProgramWithImages[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchPrograms();
+
+    const channel = supabase
+      .channel('programs-changes')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'programs' },
+        () => {
+          fetchPrograms();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  const fetchPrograms = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('programs')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(3);
+
+      if (error) throw error;
+
+      const programsWithImages = (data || []).map(program => ({
+        ...program,
+        images: getAllTopicImages(program.title)
+      }));
+
+      setPrograms(programsWithImages);
+    } catch (error) {
+      console.error('Error fetching programs:', error);
+      setError('Failed to load programs');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <section id="programs" className="py-20 relative bg-light dark:bg-dark">
+        <div className="max-w-7xl mx-auto px-4 flex justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section id="programs" className="py-20 relative bg-light dark:bg-dark">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <p className="text-red-500 dark:text-red-400">{error}</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section id="programs" className="py-20 relative bg-light dark:bg-dark">
       <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=1600')] bg-fixed bg-cover bg-center opacity-50 dark:opacity-40" />
@@ -67,9 +107,9 @@ export default function Programs() {
         </div>
         
         <div className="grid md:grid-cols-3 gap-8">
-          {programs.slice(0, 3).map((program, index) => (
+          {programs.map((program, index) => (
             <motion.div
-              key={program.title}
+              key={program.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               whileHover={{ y: -8 }}
@@ -78,28 +118,23 @@ export default function Programs() {
               className="group bg-white dark:bg-dark-lighter/80 shadow-lg dark:shadow-none backdrop-blur-sm rounded-lg overflow-hidden hover:shadow-xl dark:hover:bg-dark-accent/50 transition-all duration-300"
             >
               <div className="h-48 overflow-hidden">
-                <img 
-                  src={program.image} 
-                  alt={program.title}
-                  className="w-full h-full object-cover transition-transform group-hover:scale-110"
+                <ImageCarousel 
+                  images={program.images}
+                  className="h-full"
+                  interval={4000}
+                  showControls={false}
+                  showIndicators={false}
                 />
               </div>
               <div className="p-6">
-                <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">{program.title}</h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-4">{program.description}</p>
-                <div className="mb-4">
-                  <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-400 mb-2">Key Components:</h4>
-                  <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                    {program.subPrograms.slice(0, 3).map((sub, idx) => (
-                      <li key={idx} className="flex items-center">
-                        <span className="w-1.5 h-1.5 bg-primary rounded-full mr-2"></span>
-                        {sub}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white group-hover:text-primary transition-colors">
+                  {program.title}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
+                  {program.description}
+                </p>
                 <Link 
-                  to={`/programs/${program.title.toLowerCase().replace(/\s+/g, '-')}`}
+                  to={`/programs/${program.slug}`}
                   className="text-primary hover:text-primary/80 transition-colors flex items-center"
                 >
                   Learn More 

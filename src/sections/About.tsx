@@ -67,6 +67,14 @@ export default function About() {
                 Organizations (CBOs), and individuals in realizing their corporate goals in a respectful,
                 responsible, and pleasurable expression of humanity, especially women's Rights.
               </p>
+              <p className="mb-4">
+                <strong>Monitoring and Evaluation:</strong><br />
+                FIDIPA continuously and closely monitors projects through various monitoring tools developed
+                during the planning process together with the beneficiaries. The entire project planning,
+                implementation, monitoring, and evaluation process is highly participatory and interactive
+                to facilitate group learning and community participation on the basis of participatory
+                learning and action approach (PLA).
+              </p>
             </motion.div>
             
             <button
@@ -114,8 +122,8 @@ export default function About() {
         >
           {[
             { number: "18+", label: "Years Experience" },
-            { number: "100+", label: "Projects Completed" },
-            { number: "200K+", label: "Lives Impacted" },
+            { number: "200+", label: "Community Paralegals" },
+            { number: "7", label: "Counties Served" },
             { number: "50+", label: "Community Partners" }
           ].map((stat, index) => (
             <motion.div
