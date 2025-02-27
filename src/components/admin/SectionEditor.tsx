@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabase';
 import AdminHeader from './AdminHeader';
 import DataTable from './DataTable';
 import Editor from './Editor';
@@ -21,73 +20,84 @@ export default function SectionEditor() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    fetchSections();
-
-    const channel = supabase
-      .channel('sections-changes')
-      .on('postgres_changes', 
-        { event: '*', schema: 'public', table: 'sections' },
-        () => {
-          fetchSections();
+    // Simulate fetching sections
+    setTimeout(() => {
+      const mockSections = [
+        {
+          id: '1',
+          title: 'Home Section',
+          content: 'Welcome to FIDIPA',
+          image_url: '/src/assets/images/DSC01363.JPG',
+          sort_order: 0
+        },
+        {
+          id: '2',
+          title: 'About Section',
+          content: 'FIDIPA is a Non-Governmental Organization registered in Kenya in 2007.',
+          image_url: '/src/assets/images/SAM_0721.JPG',
+          sort_order: 1
         }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
+      ];
+      setSections(mockSections);
+      setLoading(false);
+    }, 1000);
   }, []);
 
   const fetchSections = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('sections')
-        .select('*')
-        .order('sort_order', { ascending: true });
-
-      if (error) throw error;
-      setSections(data || []);
-    } catch (error) {
-      console.error('Error fetching sections:', error);
-    } finally {
+    // This would be replaced with actual data fetching in a real implementation
+    setLoading(true);
+    setTimeout(() => {
+      const mockSections = [
+        {
+          id: '1',
+          title: 'Home Section',
+          content: 'Welcome to FIDIPA',
+          image_url: '/src/assets/images/DSC01363.JPG',
+          sort_order: 0
+        },
+        {
+          id: '2',
+          title: 'About Section',
+          content: 'FIDIPA is a Non-Governmental Organization registered in Kenya in 2007.',
+          image_url: '/src/assets/images/SAM_0721.JPG',
+          sort_order: 1
+        }
+      ];
+      setSections(mockSections);
       setLoading(false);
-    }
+    }, 1000);
   };
 
   const handleSave = async (section: Section) => {
     setSaving(true);
     try {
-      const { error } = await supabase
-        .from('sections')
-        .upsert({
-          id: section.id,
-          title: section.title,
-          content: section.content,
-          image_url: section.image_url,
-          sort_order: section.sort_order,
-          updated_at: new Date().toISOString()
-        });
-
-      if (error) throw error;
-      setEditingSection(null);
-      await fetchSections();
+      // Simulate saving
+      setTimeout(() => {
+        if (section.id) {
+          setSections(prev => prev.map(s => s.id === section.id ? section : s));
+        } else {
+          const newSection = {
+            ...section,
+            id: Math.random().toString(36).substring(7)
+          };
+          setSections(prev => [...prev, newSection]);
+        }
+        setEditingSection(null);
+        setSaving(false);
+      }, 1000);
     } catch (error) {
       console.error('Error saving section:', error);
       alert('Failed to save section');
-    } finally {
       setSaving(false);
     }
   };
 
   const handleDelete = async (section: Section) => {
     try {
-      const { error } = await supabase
-        .from('sections')
-        .delete()
-        .eq('id', section.id);
-
-      if (error) throw error;
-      await fetchSections();
+      // Simulate deleting
+      setTimeout(() => {
+        setSections(prev => prev.filter(s => s.id !== section.id));
+      }, 500);
     } catch (error) {
       console.error('Error deleting section:', error);
       alert('Failed to delete section');

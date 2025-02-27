@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, Sun, Moon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../hooks/useTheme';
-import { supabase } from '../lib/supabase';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,27 +18,8 @@ export default function Navbar() {
   });
 
   useEffect(() => {
-    const fetchSiteConfig = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('site_config')
-          .select('sections')
-          .single();
-        
-        if (error) {
-          console.error('Error fetching site config:', error);
-          return; // Keep default values if there's an error
-        }
-        
-        if (data?.sections) {
-          setVisibleSections(data.sections);
-        }
-      } catch (error) {
-        console.error('Error in fetchSiteConfig:', error);
-      }
-    };
-
-    fetchSiteConfig();
+    // This would be replaced with actual data fetching in a real implementation
+    // For now, we'll use the default values
   }, []);
 
   const menuItems = [

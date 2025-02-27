@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabase';
+import React, { useState } from 'react';
 import { Trash2, Copy, Loader2 } from 'lucide-react';
 import MediaUploader from './MediaUploader';
 import AdminHeader from './AdminHeader';
@@ -12,57 +11,12 @@ interface MediaItem {
 
 export default function MediaLibrary() {
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [copying, setCopying] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchMediaItems();
-  }, []);
-
-  const fetchMediaItems = async () => {
-    try {
-      const { data: files, error } = await supabase.storage
-        .from('media')
-        .list('uploads');
-
-      if (error) throw error;
-
-      const items = await Promise.all(
-        (files || []).map(async (file) => {
-          const { data: { publicUrl } } = supabase.storage
-            .from('media')
-            .getPublicUrl(`uploads/${file.name}`);
-
-          return {
-            name: file.name,
-            url: publicUrl,
-            path: `uploads/${file.name}`
-          };
-        })
-      );
-
-      setMediaItems(items);
-    } catch (error) {
-      console.error('Error fetching media items:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleDelete = async (item: MediaItem) => {
     if (!window.confirm('Are you sure you want to delete this file?')) return;
-
-    try {
-      const { error } = await supabase.storage
-        .from('media')
-        .remove([item.path]);
-
-      if (error) throw error;
-      setMediaItems(prev => prev.filter(i => i.path !== item.path));
-    } catch (error) {
-      console.error('Error deleting file:', error);
-      alert('Failed to delete file');
-    }
+    setMediaItems(prev => prev.filter(i => i.path !== item.path));
   };
 
   const copyToClipboard = async (url: string) => {

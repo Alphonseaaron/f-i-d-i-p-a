@@ -1,61 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabase';
 import AdminHeader from '../../components/admin/AdminHeader';
 import DataTable from '../../components/admin/DataTable';
 import ContentForm from '../../components/admin/ContentForm';
+import { blogPosts } from '../../data';
 
 export default function BlogManager() {
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [posts, setPosts] = useState(blogPosts);
+  const [loading, setLoading] = useState(false);
   const [editingPost, setEditingPost] = useState(null);
-
-  useEffect(() => {
-    fetchPosts();
-
-    const channel = supabase
-      .channel('blog-changes')
-      .on('postgres_changes', 
-        { event: '*', schema: 'public', table: 'blog_posts' },
-        () => {
-          fetchPosts();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
-
-  const fetchPosts = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('blog_posts')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setPosts(data || []);
-    } catch (error) {
-      console.error('Error fetching blog posts:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSave = async (data) => {
     try {
-      const { error } = await supabase
-        .from('blog_posts')
-        .upsert({
-          id: editingPost?.id,
+      if (editingPost?.id) {
+        // Update existing post
+        setPosts(prev => prev.map(post => 
+          post.id === editingPost.id ? { ...post, ...data } : post
+        ));
+      } else {
+        // Add new post
+        const newPost = {
+          id: Math.random().toString(36).substring(7),
           ...data,
-          updated_at: new Date().toISOString()
-        });
-
-      if (error) throw error;
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+        setPosts(prev => [newPost, ...prev]);
+      }
       setEditingPost(null);
-      await fetchPosts();
     } catch (error) {
       console.error('Error saving blog post:', error);
       alert('Failed to save blog post');
@@ -64,13 +35,7 @@ export default function BlogManager() {
 
   const handleDelete = async (post) => {
     try {
-      const { error } = await supabase
-        .from('blog_posts')
-        .delete()
-        .eq('id', post.id);
-
-      if (error) throw error;
-      await fetchPosts();
+      setPosts(prev => prev.filter(p => p.id !== post.id));
     } catch (error) {
       console.error('Error deleting blog post:', error);
       alert('Failed to delete blog post');
@@ -115,7 +80,7 @@ export default function BlogManager() {
             )
           },
           { 
-            key: 'created_at', 
+            key: 'createdAt', 
             header: 'Created',
             render: (value) => new Date(value).toLocaleDateString()
           }

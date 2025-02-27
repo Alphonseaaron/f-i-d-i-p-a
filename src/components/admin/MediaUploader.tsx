@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Loader2 } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
 import { nanoid } from 'nanoid';
 
 interface MediaUploaderProps {
@@ -28,16 +27,7 @@ export default function MediaUploader({ onUploadComplete, folder = 'uploads', ac
     try {
       const fileExt = file.name.split('.').pop();
       const filePath = `${folder}/${nanoid()}.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('media')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl: url } } = supabase.storage
-        .from('media')
-        .getPublicUrl(filePath);
+      const url = URL.createObjectURL(file);
 
       onUploadComplete(url, filePath);
     } catch (error) {
